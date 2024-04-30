@@ -1,16 +1,19 @@
 #include "stb_image_write.h"
 #include "tinyexr.h"
 
+#include "color3.h"
+
 #include <iostream>
-#include <vector>
 
 int main()
 {
     uint32_t ImageWidth = 1920;
     uint32_t ImageHeight = 1080;
 
-    std::vector<float> FloatImageData(ImageWidth * ImageHeight * 3);
-    std::vector<unsigned char> UnsignedCharImageData(ImageWidth * ImageHeight * 3);
+    std::vector<float> FloatImageData;
+    FloatImageData.reserve(ImageWidth * ImageHeight * 3);
+    std::vector<unsigned char> UnsignedCharImageData;
+    UnsignedCharImageData.reserve(ImageWidth * ImageHeight * 3);
 
     for (uint32_t i = 0; i < ImageHeight; ++i)
     {
@@ -18,13 +21,9 @@ int main()
 
         for(uint32_t j = 0; j < ImageWidth; ++j)
         {
-            FloatImageData[(i * ImageWidth + j) * 3] = float(j) / float(ImageWidth);
-            FloatImageData[(i * ImageWidth + j) * 3 + 1] = float(i) / float(ImageHeight);;
-            FloatImageData[(i * ImageWidth + j) * 3 + 2] = 0;
-
-            UnsignedCharImageData[(i * ImageWidth + j) * 3] = 255.999 * FloatImageData[(i * ImageWidth + j) * 3];
-            UnsignedCharImageData[(i * ImageWidth + j) * 3 + 1] = 255.999 * FloatImageData[(i * ImageWidth + j) * 3 + 1];
-            UnsignedCharImageData[(i * ImageWidth + j) * 3 + 2] = 255.999 * FloatImageData[(i * ImageWidth + j) * 3 + 2];
+            FColor3 PixelColor = {float(j) / float(ImageWidth), float(i) / float(ImageHeight), 0};
+            WriteColor(FloatImageData, PixelColor);
+            WriteColor(UnsignedCharImageData, PixelColor);
         }
     }
 
