@@ -1,6 +1,7 @@
 #include "stb_image_write.h"
 #include "tinyexr.h"
 
+#include <iostream>
 #include <vector>
 
 int main()
@@ -13,6 +14,8 @@ int main()
 
     for (uint32_t i = 0; i < ImageHeight; ++i)
     {
+        std::cout << "Scanline remaining: " << (ImageHeight - i) << std::endl;
+
         for(uint32_t j = 0; j < ImageWidth; ++j)
         {
             FloatImageData[(i * ImageWidth + j) * 3] = float(j) / float(ImageWidth);
@@ -24,6 +27,8 @@ int main()
             UnsignedCharImageData[(i * ImageWidth + j) * 3 + 2] = 255.999 * FloatImageData[(i * ImageWidth + j) * 3 + 2];
         }
     }
+
+    std::cout << "Rendering finished." << std::endl;
 
     const char* Err = NULL;
     SaveEXR(FloatImageData.data(), ImageWidth, ImageHeight, 3, false, "Result.exr", &Err);
