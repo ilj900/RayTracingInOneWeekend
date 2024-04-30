@@ -15,13 +15,13 @@ int main()
     {
         for(uint32_t j = 0; j < ImageWidth; ++j)
         {
-            FloatImageData[(i * ImageWidth + j) * 3] = 1;
-            FloatImageData[(i * ImageWidth + j) * 3 + 1] = 0;
-            FloatImageData[(i * ImageWidth + j) * 3 + 2] = 1;
+            FloatImageData[(i * ImageWidth + j) * 3] = float(j) / float(ImageWidth);
+            FloatImageData[(i * ImageWidth + j) * 3 + 1] = float(i) / float(ImageHeight);;
+            FloatImageData[(i * ImageWidth + j) * 3 + 2] = 0;
 
-            UnsignedCharImageData[(i * ImageWidth + j) * 3] = 255;
-            UnsignedCharImageData[(i * ImageWidth + j) * 3 + 1] = 0;
-            UnsignedCharImageData[(i * ImageWidth + j) * 3 + 2] = 255;
+            UnsignedCharImageData[(i * ImageWidth + j) * 3] = 255.999 * FloatImageData[(i * ImageWidth + j) * 3];
+            UnsignedCharImageData[(i * ImageWidth + j) * 3 + 1] = 255.999 * FloatImageData[(i * ImageWidth + j) * 3 + 1];
+            UnsignedCharImageData[(i * ImageWidth + j) * 3 + 2] = 255.999 * FloatImageData[(i * ImageWidth + j) * 3 + 2];
         }
     }
 
