@@ -39,6 +39,11 @@ float FVector3::Length2() const
     return X * X + Y * Y + Z * Z;
 }
 
+float Dot(const FVector3& A, const FVector3& B)
+{
+    return A.X * B.X + A.Y * B.Y + A.Z * B.Z;
+}
+
 std::string FVector3::ToString() const
 {
     std::string Result = "FVector3(";

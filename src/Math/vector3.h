@@ -22,6 +22,8 @@ struct FVector3
     float Z;
 };
 
+float Dot(const FVector3& A, const FVector3& B);
+
 FVector3 operator-(const FVector3& A);
 bool operator==(const FVector3& A, const FVector3& B);
 FVector3& operator+=(FVector3& A, const FVector3& B);
