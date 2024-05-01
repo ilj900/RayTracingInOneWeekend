@@ -6,23 +6,33 @@
 
 #include <iostream>
 
-bool HitSphere(const FPoint3& SphereCenter, float Radius, const FRay& Ray)
+float HitSphere(const FPoint3& SphereCenter, float Radius, const FRay& Ray)
 {
     FVector3 RayOriginToSphereCenterVector = SphereCenter - Ray.GetOrigin();
 
     float A = Ray.GetDirection().Length();
-    float B = 2.f * Dot(Ray.GetDirection(), RayOriginToSphereCenterVector);
+    float B = -2.f * Dot(Ray.GetDirection(), RayOriginToSphereCenterVector);
     float C = RayOriginToSphereCenterVector.Length() - (Radius * Radius);
     float D = B * B - 4 * A * C;
 
-    return (D >= 0);
+    if (D < 0)
+    {
+        return -1.f;
+    }
+    else
+    {
+        return (-B - sqrt(D)) / (2.f * A);
+    }
 }
 
 FColor3 RayColor(const FRay& Ray)
 {
-    if (HitSphere({0, 0, -1}, 0.5f, Ray))
+    auto T = HitSphere({0, 0, -1}, 0.5f, Ray);
+
+    if (T > 0.f)
     {
-        return {1, 0, 0};
+        FVector3 Normal = (Ray.At(T) - FVector3(0, 0, -1)).GetNormalized();
+        return 0.5f * FColor3(Normal.X + 1, Normal.Y + 1, Normal.Z + 1);
     }
 
     FVector3 UnitDirection = Ray.GetDirection().GetNormalized();
