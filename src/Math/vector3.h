@@ -12,9 +12,9 @@ struct FVector3
     /// Functions
     FVector3 GetNormalized() const;
     FVector3& Normalize();
-    float Length();
-    float Length2();
-    std::string ToString();
+    float Length() const;
+    float Length2() const;
+    std::string ToString() const;
 
     /// Data
     float X;
@@ -33,7 +33,9 @@ FVector3 operator+(const FVector3& A, const FVector3& B);
 FVector3 operator-(const FVector3& A, const FVector3& B);
 FVector3 operator*(const FVector3& A, const FVector3& B);
 FVector3 operator*(const FVector3& A, float Val);
+FVector3 operator*(float Val, const FVector3& A);
 FVector3 operator/(const FVector3& A, float Val);
+FVector3 operator/(float Val, const FVector3& A);
 
 using FPoint3 = FVector3;
 

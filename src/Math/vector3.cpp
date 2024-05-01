@@ -7,7 +7,7 @@
 ///FVector3 and it's operations
 ///****************************************************************
 
-inline FVector3 FVector3::GetNormalized() const
+FVector3 FVector3::GetNormalized() const
 {
     float L = std::sqrt(X * X + Y * Y + Z * Z);
 
@@ -16,10 +16,10 @@ inline FVector3 FVector3::GetNormalized() const
         throw std::runtime_error("Failed to normalize FVector3");
     }
 
-    return FVector3(X / L, Y / L, Z / L);
+    return {X / L, Y / L, Z / L};
 }
 
-inline FVector3& FVector3::Normalize()
+FVector3& FVector3::Normalize()
 {
     auto L = Length();
     X /= L;
@@ -29,17 +29,17 @@ inline FVector3& FVector3::Normalize()
     return *this;
 }
 
-inline float FVector3::Length()
+float FVector3::Length() const
 {
     return sqrt(X * X + Y * Y + Z * Z);
 }
 
-inline float FVector3::Length2()
+float FVector3::Length2() const
 {
     return X * X + Y * Y + Z * Z;
 }
 
-inline std::string FVector3::ToString()
+std::string FVector3::ToString() const
 {
     std::string Result = "FVector3(";
     Result += std::to_string(X) + ", ";
@@ -49,17 +49,17 @@ inline std::string FVector3::ToString()
     return Result;
 }
 
-inline FVector3 operator-(const FVector3& A)
+FVector3 operator-(const FVector3& A)
 {
-    return FVector3(-A.X, -A.Y, -A.Z);
+    return {-A.X, -A.Y, -A.Z};
 }
 
-inline bool operator==(const FVector3& A, const FVector3& B)
+bool operator==(const FVector3& A, const FVector3& B)
 {
     return (A.X == B.X && A.Y == B.Y && A.Z == B.Z);
 }
 
-inline FVector3& operator+=(FVector3& A, const FVector3& B)
+FVector3& operator+=(FVector3& A, const FVector3& B)
 {
     A.X += B.X;
     A.Y += B.Y;
@@ -68,7 +68,7 @@ inline FVector3& operator+=(FVector3& A, const FVector3& B)
     return A;
 }
 
-inline FVector3& operator-=(FVector3& A, const FVector3& B)
+FVector3& operator-=(FVector3& A, const FVector3& B)
 {
     A.X -= B.X;
     A.Y -= B.Y;
@@ -77,7 +77,7 @@ inline FVector3& operator-=(FVector3& A, const FVector3& B)
     return A;
 }
 
-inline FVector3& operator*=(FVector3& A, const FVector3& B)
+FVector3& operator*=(FVector3& A, const FVector3& B)
 {
     A.X *= B.X;
     A.Y *= B.Y;
@@ -86,7 +86,7 @@ inline FVector3& operator*=(FVector3& A, const FVector3& B)
     return A;
 }
 
-inline FVector3& operator*=(FVector3& A, float Val)
+FVector3& operator*=(FVector3& A, float Val)
 {
     A.X *= Val;
     A.Y *= Val;
@@ -95,7 +95,7 @@ inline FVector3& operator*=(FVector3& A, float Val)
     return A;
 }
 
-inline FVector3& operator/=(FVector3& A, float Val)
+FVector3& operator/=(FVector3& A, float Val)
 {
     A.X /= Val;
     A.Y /= Val;
@@ -104,27 +104,37 @@ inline FVector3& operator/=(FVector3& A, float Val)
     return A;
 }
 
-inline FVector3 operator+(const FVector3& A, const FVector3& B)
+FVector3 operator+(const FVector3& A, const FVector3& B)
 {
-    return FVector3(A.X + B.X, A.Y + B.Y, A.Z + B.Z);
+    return {A.X + B.X, A.Y + B.Y, A.Z + B.Z};
 }
 
-inline FVector3 operator-(const FVector3& A, const FVector3& B)
+FVector3 operator-(const FVector3& A, const FVector3& B)
 {
-    return FVector3(A.X - B.X, A.Y - B.Y, A.Z - B.Z);
+    return {A.X - B.X, A.Y - B.Y, A.Z - B.Z};
 }
 
-inline FVector3 operator*(const FVector3& A, const FVector3& B)
+FVector3 operator*(const FVector3& A, const FVector3& B)
 {
-    return FVector3(A.Y * B.X, A.Y * B.Y, A.Z * B.Z);
+    return {A.Y * B.X, A.Y * B.Y, A.Z * B.Z};
 }
 
-inline FVector3 operator*(const FVector3& A, float Val)
+FVector3 operator*(const FVector3& A, float Val)
 {
-    return FVector3(A.X * Val, A.Y * Val, A.Z * Val);
+    return {A.X * Val, A.Y * Val, A.Z * Val};
 }
 
-inline FVector3 operator/(const FVector3& A, float Val)
+FVector3 operator*(float Val, const FVector3& A)
 {
-    return FVector3(A.X / Val, A.Y / Val, A.Z / Val);
+    return A * Val;
+}
+
+FVector3 operator/(const FVector3& A, float Val)
+{
+    return {A.X / Val, A.Y / Val, A.Z / Val};
+}
+
+FVector3 operator/(float Val, const FVector3& A)
+{
+    return A / Val;
 }
