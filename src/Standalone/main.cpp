@@ -11,9 +11,9 @@ float HitSphere(const FPoint3& SphereCenter, float Radius, const FRay& Ray)
     FVector3 RayOriginToSphereCenterVector = SphereCenter - Ray.GetOrigin();
 
     float A = Ray.GetDirection().Length2();
-    float B = -2.f * Dot(Ray.GetDirection(), RayOriginToSphereCenterVector);
+    float H = Dot(Ray.GetDirection(), RayOriginToSphereCenterVector);
     float C = RayOriginToSphereCenterVector.Length2() - (Radius * Radius);
-    float D = B * B - 4 * A * C;
+    float D = H * H - A * C;
 
     if (D < 0)
     {
@@ -21,7 +21,7 @@ float HitSphere(const FPoint3& SphereCenter, float Radius, const FRay& Ray)
     }
     else
     {
-        return (-B - sqrt(D)) / (2.f * A);
+        return (H - sqrt(D)) / A;
     }
 }
 
