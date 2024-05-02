@@ -92,7 +92,7 @@ FVector3 FCamera::RandomVector3()
 FVector3 FCamera::RandomVector3(float Min, float Max)
 {
     auto RandomVector = RandomVector3();
-    RandomVector = FVector3(Min, Min, Min) + (FVector3(Max, Max, Max) - FVector3(Min, Min, Min)) * RandomVector;
+    RandomVector = FVector3(Min, Min, Min) + ((FVector3(Max, Max, Max) - FVector3(Min, Min, Min))) * RandomVector;
     return RandomVector;
 }
 
