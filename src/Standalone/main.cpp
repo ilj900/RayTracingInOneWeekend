@@ -2,41 +2,22 @@
 #include "tinyexr.h"
 
 #include "color3.h"
-#include "ray.h"
+#include "hittable_list.h"
+#include "sphere.h"
 
 #include <iostream>
 
-float HitSphere(const FPoint3& SphereCenter, float Radius, const FRay& Ray)
+FColor3 RayColor(const FRay& Ray, const FHittable& World)
 {
-    FVector3 RayOriginToSphereCenterVector = SphereCenter - Ray.GetOrigin();
+    FHitRecord HitRecord;
 
-    float A = Ray.GetDirection().Length2();
-    float H = Dot(Ray.GetDirection(), RayOriginToSphereCenterVector);
-    float C = RayOriginToSphereCenterVector.Length2() - (Radius * Radius);
-    float D = H * H - A * C;
-
-    if (D < 0)
+    if (World.Hit(Ray, 0, INFINITY, HitRecord))
     {
-        return -1.f;
-    }
-    else
-    {
-        return (H - sqrt(D)) / A;
-    }
-}
-
-FColor3 RayColor(const FRay& Ray)
-{
-    auto T = HitSphere({0, 0, -1}, 0.5f, Ray);
-
-    if (T > 0.f)
-    {
-        FVector3 Normal = (Ray.At(T) - FVector3(0, 0, -1)).GetNormalized();
-        return 0.5f * FColor3(Normal.X + 1, Normal.Y + 1, Normal.Z + 1);
+        return 0.5f * (HitRecord.Normal + FColor3(1, 1, 1));
     }
 
     FVector3 UnitDirection = Ray.GetDirection().GetNormalized();
-    float A = 0.5 * (UnitDirection.Y + 1.f);
+    float A = 0.5f * (UnitDirection.Y + 1.f);
     return FColor3 (1, 1, 1) * (1.f - A) + FColor3(0.5, 0.7, 1) * A;
 }
 
@@ -51,6 +32,11 @@ int main()
     FloatImageData.reserve(ImageWidth * ImageHeight * 3);
     std::vector<unsigned char> UnsignedCharImageData;
     UnsignedCharImageData.reserve(ImageWidth * ImageHeight * 3);
+
+    FHittableList World;
+
+    World.Add(std::make_shared<FSphere>(FVector3{0, 0, -1}, 0.5f));
+    World.Add(std::make_shared<FSphere>(FVector3{0, -100.5, -1}, 100.f));
 
     /// Camera
     float FocalLength = 1.0;
@@ -73,7 +59,7 @@ int main()
             auto PixelCenter = Pixel00 + (PixelDeltaU * j) + (PixelDeltaV * i);
             auto RayDirection = PixelCenter - CameraCenter; /// Not normalized
             FRay Ray(CameraCenter, RayDirection);
-            FColor3 PixelColor = RayColor(Ray);
+            FColor3 PixelColor = RayColor(Ray, World);
 
             WriteColor(FloatImageData, PixelColor);
             WriteColor(UnsignedCharImageData, PixelColor);
