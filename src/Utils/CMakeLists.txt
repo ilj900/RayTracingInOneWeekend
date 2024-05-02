@@ -25,6 +25,6 @@ set (INCLUDE_UTILS
 set (SOURCE_UTILS
         rng.cpp)
 
-add_library(UTILS STATIC ${SOURCE_UTILS} ${INCLUDE_UTILS})
+add_library(Utils STATIC ${SOURCE_UTILS} ${INCLUDE_UTILS})
 
 target_include_directories(Standalone PUBLIC .)

@@ -16,4 +16,4 @@ set(SOURCE
 
 add_executable(Standalone ${SOURCE} ${INCLUDE})
 
-target_link_libraries(Standalone TinyExr StbImage Math)
+target_link_libraries(Standalone TinyExr StbImage Math Utils)

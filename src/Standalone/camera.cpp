@@ -34,9 +34,16 @@ void FCamera::Initialize()
     PixelDeltaU = ViewportU / float(ImageWidth);
     PixelDeltaV = ViewportV / float(ImageHeight);
 
-    FPoint3 ViewportUpperLeft = CameraCenter - FVector3{0, 0, FocalLength} - (ViewportU * 0.5f) - (ViewportV * 0.5f);
-    Pixel00 = ViewportUpperLeft + ((PixelDeltaU + PixelDeltaV) * 0.5);
+    Pixel00 = CameraCenter - FVector3{0, 0, FocalLength} - (ViewportU * 0.5f) - (ViewportV * 0.5f);
+}
 
+FRay FCamera::GetRay(uint32_t X, uint32_t Y)
+{
+    auto PixelUpperLeft = Pixel00 + (PixelDeltaU * X) + (PixelDeltaV * Y);
+    auto JitteredPixel = PixelUpperLeft + (PixelDeltaU * RNG()) + (PixelDeltaV * RNG());
+    auto RayDirection = JitteredPixel - CameraCenter; /// Not normalized
+    FRay Ray(CameraCenter, RayDirection);
+    return Ray;
 }
 
 void FCamera::Render(const FHittable &World)
@@ -49,12 +56,12 @@ void FCamera::Render(const FHittable &World)
 
         for(uint32_t j = 0; j < ImageWidth; ++j)
         {
-            auto PixelCenter = Pixel00 + (PixelDeltaU * j) + (PixelDeltaV * i);
-            auto RayDirection = PixelCenter - CameraCenter; /// Not normalized
-            FRay Ray(CameraCenter, RayDirection);
-            FColor3 PixelColor = RayColor(Ray, World);
-
-            WriteColor(PixelColor, i * ImageWidth + j);
+            for (uint32_t k = 0; k < IterationsPerPixel; ++k)
+            {
+                auto Ray = GetRay(j, i);
+                FColor3 PixelColor = RayColor(Ray, World);
+                WriteColor(PixelColor, i * ImageWidth + j);
+            }
         }
     }
 
