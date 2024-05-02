@@ -1,6 +1,7 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
 
+#include "interval.h"
 #include "ray.h"
 
 class FHitRecord
@@ -19,7 +20,7 @@ class FHittable
 public:
     virtual ~FHittable() = default;
 
-    virtual bool Hit(const FRay& Ray, float TMin, float TMax, FHitRecord& HitRecordOut) const = 0;
+    virtual bool Hit(const FRay& Ray, FInterval Interval, FHitRecord& HitRecordOut) const = 0;
 };
 
 #endif // HITTABLE_H

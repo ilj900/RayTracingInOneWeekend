@@ -17,7 +17,7 @@ public:
     void Clear();
     void Add(std::shared_ptr<FHittable> Hittable);
 
-    bool Hit(const FRay& Ray, float TMin, float TMax, FHitRecord& HitRecordOut) const override;
+    bool Hit(const FRay& Ray, FInterval Interval, FHitRecord& HitRecordOut) const override;
 };
 
 #endif // HITTABLE_LIST_H

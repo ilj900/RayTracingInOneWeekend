@@ -8,7 +8,7 @@ class FSphere : public FHittable
 public:
     FSphere(const FPoint3& CenterIn, float RadiusIn);
 
-    bool Hit(const FRay& Ray, float TMin, float TMax, FHitRecord& HitRecordOut) const override;
+    bool Hit(const FRay& Ray, FInterval Interval, FHitRecord& HitRecordOut) const override;
 
 private:
     FPoint3 Center;

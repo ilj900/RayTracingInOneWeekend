@@ -11,7 +11,7 @@ FColor3 RayColor(const FRay& Ray, const FHittable& World)
 {
     FHitRecord HitRecord;
 
-    if (World.Hit(Ray, 0, INFINITY, HitRecord))
+    if (World.Hit(Ray, {0, INFINITY}, HitRecord))
     {
         return 0.5f * (HitRecord.Normal + FColor3(1, 1, 1));
     }

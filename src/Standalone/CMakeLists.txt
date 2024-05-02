@@ -2,11 +2,13 @@ set(INCLUDE
         common_defines.h
         hittable.h
         hittable_list.h
+        interval.h
         sphere.h)
 
 set(SOURCE
         hittable.cpp
         hittable_list.cpp
+        interval.cpp
         main.cpp
         sphere.cpp)
 

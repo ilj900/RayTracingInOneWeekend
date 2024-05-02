@@ -1,3 +1,5 @@
+#include "interval.h"
+
 #include "hittable_list.h"
 
 FHittableList::FHittableList(std::shared_ptr<FHittable> Hittable)
@@ -15,15 +17,15 @@ void FHittableList::Add(std::shared_ptr<FHittable> Hittable)
     Hittables.push_back(Hittable);
 }
 
-bool FHittableList::Hit(const FRay& Ray, float TMin, float TMax, FHitRecord& HitRecordOut) const
+bool FHittableList::Hit(const FRay& Ray, FInterval Interval, FHitRecord& HitRecordOut) const
 {
     FHitRecord HitRecord{};
     bool bHitAnything = false;
-    auto ClosestSoFar = TMax;
+    auto ClosestSoFar = Interval.Max;
 
     for (const auto& Hittable : Hittables)
     {
-        if (Hittable->Hit(Ray, TMin, ClosestSoFar, HitRecord))
+        if (Hittable->Hit(Ray, {Interval.Min, ClosestSoFar}, HitRecord))
         {
             bHitAnything = true;
             ClosestSoFar = HitRecord.T;

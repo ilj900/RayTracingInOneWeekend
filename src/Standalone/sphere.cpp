@@ -2,7 +2,7 @@
 
 FSphere::FSphere(const FPoint3& CenterIn, float RadiusIn) : Center(CenterIn), Radius(RadiusIn) {};
 
-bool FSphere::Hit(const FRay &Ray, float TMin, float TMax, FHitRecord& HitRecordOut) const
+bool FSphere::Hit(const FRay &Ray, FInterval Interval, FHitRecord& HitRecordOut) const
 {
     FVector3 RayOriginToSphereCenterVector = Center - Ray.GetOrigin();
 
@@ -20,11 +20,11 @@ bool FSphere::Hit(const FRay &Ray, float TMin, float TMax, FHitRecord& HitRecord
 
     float Root = (H -SqrtD) / A;
 
-    if (Root <= TMin || TMax <= Root)
+    if (!Interval.Surrounds(Root))
     {
         Root = (H + SqrtD) / A;
 
-        if (Root <= TMin || TMax <= Root)
+        if (!Interval.Surrounds(Root))
         {
             return false;
         }
