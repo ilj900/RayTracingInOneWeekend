@@ -4,6 +4,8 @@
 #include <tuple>
 #include <random>
 
+class FVector3;
+
 class RNG1D
 {
 public:
@@ -45,5 +47,11 @@ private:
     std::uniform_real_distribution<float>  DistributionZ;
     std::mt19937 Generator;
 };
+
+FVector3 RandomVector3();
+FVector3 RandomVector3(float Min, float Max);
+FVector3 RandomVectorInUnitSphere();
+FVector3 RandomUnitVector();
+FVector3 RandomUnitVectorOnHemisphere(const FVector3& Normal);
 
 #endif // RNG_H

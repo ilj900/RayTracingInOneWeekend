@@ -4,6 +4,7 @@ set(INCLUDE
         hittable.h
         hittable_list.h
         interval.h
+        material.h
         sphere.h)
 
 set(SOURCE
@@ -12,6 +13,7 @@ set(SOURCE
         hittable_list.cpp
         interval.cpp
         main.cpp
+        material.cpp
         sphere.cpp)
 
 add_executable(Standalone ${SOURCE} ${INCLUDE})

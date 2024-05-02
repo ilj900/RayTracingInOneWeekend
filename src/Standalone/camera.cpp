@@ -2,6 +2,7 @@
 #include "tinyexr.h"
 
 #include "camera.h"
+#include "material.h"
 
 #include <iostream>
 
@@ -16,8 +17,15 @@ FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &Worl
 
     if (World.Hit(Ray, {0.0001f, INFINITY}, HitRecord))
     {
-        FVector3 Direction = HitRecord.Normal + RandomUnitVectorOnHemisphere(HitRecord.Normal);
-        return 0.5f * RayColor(FRay(HitRecord.Position, Direction), Depth - 1, World);
+        FRay Scattered;
+        FColor3 Attenuation;
+
+        if (HitRecord.Material->Scatter(Ray, HitRecord, Attenuation, Scattered))
+        {
+            return Attenuation * RayColor(Scattered, Depth - 1, World);
+        }
+
+        return {0, 0, 0};
     }
 
     FVector3 UnitDirection = Ray.GetDirection().GetNormalized();
@@ -81,50 +89,6 @@ void FCamera::WriteColor(const FColor3& PixelColor, uint32_t PixelIndex)
     ImageData[PixelIndex * 4 + 1] += PixelColor.Y;
     ImageData[PixelIndex * 4 + 2] += PixelColor.Z;
     ImageData[PixelIndex * 4 + 3] += 1.f;
-}
-
-FVector3 FCamera::RandomVector3()
-{
-    auto [X, Y, Z] = RNG3();
-    return FVector3{X, Y, Z};
-}
-
-FVector3 FCamera::RandomVector3(float Min, float Max)
-{
-    auto RandomVector = RandomVector3();
-    RandomVector = FVector3(Min, Min, Min) + ((FVector3(Max, Max, Max) - FVector3(Min, Min, Min))) * RandomVector;
-    return RandomVector;
-}
-
-FVector3 FCamera::RandomVectorInUnitSphere()
-{
-    while (true)
-    {
-        auto Candidate = RandomVector3(-1, 1);
-        if (Candidate.Length2() < 1)
-        {
-            return Candidate;
-        }
-    }
-}
-
-FVector3 FCamera::RandomUnitVector()
-{
-    return RandomVectorInUnitSphere().GetNormalized();
-}
-
-FVector3 FCamera::RandomUnitVectorOnHemisphere(const FVector3& Normal)
-{
-    auto OnUnitSphere = RandomUnitVector();
-
-    if (Dot(OnUnitSphere, Normal) > 0.f)
-    {
-        return OnUnitSphere;
-    }
-    else
-    {
-        return -OnUnitSphere;
-    }
 }
 
 float FCamera::LinearToGamma(float Value) const

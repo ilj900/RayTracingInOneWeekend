@@ -24,11 +24,6 @@ private:
     FRay GetRay(uint32_t X, uint32_t Y);
     FColor3 RayColor(const FRay& Ray, uint32_t Depth, const FHittable& World);
     void WriteColor(const FColor3& PixelColor, uint32_t PixelIndex);
-    FVector3 RandomVector3();
-    FVector3 RandomVector3(float Min, float Max);
-    FVector3 RandomVectorInUnitSphere();
-    FVector3 RandomUnitVector();
-    FVector3 RandomUnitVectorOnHemisphere(const FVector3& Normal);
     float LinearToGamma(float Value) const;
 
     uint32_t ImageHeight;

@@ -4,11 +4,16 @@
 #include "interval.h"
 #include "ray.h"
 
+#include <memory>
+
+class FMaterial;
+
 class FHitRecord
 {
 public:
     FPoint3 Position;
     FVector3 Normal;
+    std::shared_ptr<FMaterial> Material;
     float T;
     bool bFrontFace;
 

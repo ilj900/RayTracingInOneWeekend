@@ -15,6 +15,7 @@ struct FVector3
     float Length() const;
     float Length2() const;
     std::string ToString() const;
+    bool NearZero() const;
 
     /// Data
     float X;
@@ -23,6 +24,7 @@ struct FVector3
 };
 
 float Dot(const FVector3& A, const FVector3& B);
+FVector3 Reflect(const FVector3& Vector, const FVector3& Normal);
 
 FVector3 operator-(const FVector3& A);
 bool operator==(const FVector3& A, const FVector3& B);

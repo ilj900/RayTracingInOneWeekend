@@ -1,6 +1,6 @@
 #include "sphere.h"
 
-FSphere::FSphere(const FPoint3& CenterIn, float RadiusIn) : Center(CenterIn), Radius(RadiusIn) {};
+FSphere::FSphere(const FPoint3& CenterIn, float RadiusIn, std::shared_ptr<FMaterial> MaterialIn) : Center(CenterIn), Radius(RadiusIn), Material(MaterialIn) {};
 
 bool FSphere::Hit(const FRay &Ray, FInterval Interval, FHitRecord& HitRecordOut) const
 {
@@ -34,6 +34,7 @@ bool FSphere::Hit(const FRay &Ray, FInterval Interval, FHitRecord& HitRecordOut)
     HitRecordOut.Position = Ray.At(Root);
     FVector3 OutwardNormal = (HitRecordOut.Position - Center) / Radius;
     HitRecordOut.SetFaceNormal(Ray, OutwardNormal);
+    HitRecordOut.Material = Material;
 
     return true;
 }

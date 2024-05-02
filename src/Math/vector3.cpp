@@ -44,6 +44,11 @@ float Dot(const FVector3& A, const FVector3& B)
     return A.X * B.X + A.Y * B.Y + A.Z * B.Z;
 }
 
+FVector3 Reflect(const FVector3& Vector, const FVector3& Normal)
+{
+    return Vector - 2.f * Dot(Vector, Normal) * Normal;
+}
+
 std::string FVector3::ToString() const
 {
     std::string Result = "FVector3(";
@@ -52,6 +57,12 @@ std::string FVector3::ToString() const
     Result += std::to_string(Z) + ")";
 
     return Result;
+}
+
+bool FVector3::NearZero() const
+{
+    static float Epsilon = 1e-8;
+    return (std::fabs(X) < Epsilon && std::fabs(Y) < Epsilon && std::fabs(Z) < Epsilon);
 }
 
 FVector3 operator-(const FVector3& A)
