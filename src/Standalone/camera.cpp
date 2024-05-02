@@ -23,10 +23,7 @@ void FCamera::Initialize()
 {
     ImageHeight = ImageWidth / AspectRatio;
     ImageHeight = (ImageHeight < 1) ? 1 : ImageHeight;
-    FloatImageData.clear();
-    FloatImageData.reserve(ImageWidth * ImageHeight * 3);
-    UnsignedCharImageData.clear();
-    UnsignedCharImageData.reserve(ImageWidth * ImageHeight * 3);
+    ImageData = std::vector<float>(ImageWidth * ImageHeight * 4);
 
     CameraCenter = {0, 0, 0};
     float FocalLength = 1.0;
@@ -57,21 +54,48 @@ void FCamera::Render(const FHittable &World)
             FRay Ray(CameraCenter, RayDirection);
             FColor3 PixelColor = RayColor(Ray, World);
 
-            WriteColor(FloatImageData, PixelColor);
-            WriteColor(UnsignedCharImageData, PixelColor);
+            WriteColor(PixelColor, i * ImageWidth + j);
         }
     }
 
     std::cout << "Rendering finished." << std::endl;
 }
 
+void FCamera::WriteColor(const FColor3& PixelColor, uint32_t PixelIndex)
+{
+    ImageData[PixelIndex * 4] += PixelColor.X;
+    ImageData[PixelIndex * 4 + 1] += PixelColor.Y;
+    ImageData[PixelIndex * 4 + 2] += PixelColor.Z;
+    ImageData[PixelIndex * 4 + 3] += 1.f;
+}
+
 void FCamera::SaveAsEXR(const std::string &Name)
 {
+    std::vector<float> ImageDataEstimated(ImageWidth * ImageHeight * 3);
+
+    for (uint32_t i = 0; i < ImageWidth * ImageHeight; ++i)
+    {
+        float InverseAccumulated = 1.f / ImageData[i * 4 + 3];
+        ImageDataEstimated[i * 3] = ImageData[i * 4] * InverseAccumulated;
+        ImageDataEstimated[i * 3 + 1] = ImageData[i * 4 + 1] * InverseAccumulated;
+        ImageDataEstimated[i * 3 + 2] = ImageData[i * 4 + 2] * InverseAccumulated;
+    }
+
     const char* Err = nullptr;
-    SaveEXR(FloatImageData.data(), ImageWidth, ImageHeight, 3, false, Name.c_str(), &Err);
+    SaveEXR(ImageDataEstimated.data(), ImageWidth, ImageHeight, 3, false, Name.c_str(), &Err);
 }
 
 void FCamera::SaveAsBMP(const std::string &Name)
 {
-    stbi_write_bmp(Name.c_str(), ImageWidth, ImageHeight, 3, UnsignedCharImageData.data());
+    std::vector<unsigned char> EstimatedUnsignedCharImageData(ImageWidth * ImageHeight * 3);
+
+    for (uint32_t i = 0; i < ImageWidth * ImageHeight; ++i)
+    {
+        float InverseAccumulated = 1.f / ImageData[i * 4 + 3];
+        EstimatedUnsignedCharImageData[i * 3] = 255.999f * ImageData[i * 4] * InverseAccumulated;
+        EstimatedUnsignedCharImageData[i * 3 + 1] = 255.999f * ImageData[i * 4 + 1] * InverseAccumulated;
+        EstimatedUnsignedCharImageData[i * 3 + 2] = 255.999f * ImageData[i * 4 + 2] * InverseAccumulated;
+    }
+
+    stbi_write_bmp(Name.c_str(), ImageWidth, ImageHeight, 3, EstimatedUnsignedCharImageData.data());
 }

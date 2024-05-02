@@ -4,6 +4,8 @@
 #include "color3.h"
 #include "hittable.h"
 
+#include <vector>
+
 class FCamera
 {
 public:
@@ -17,6 +19,7 @@ public:
 private:
     void Initialize();
     FColor3 RayColor(const FRay& Ray, const FHittable& World) const;
+    void WriteColor(const FColor3& PixelColor, uint32_t PixelIndex);
 
     uint32_t ImageHeight;
     FPoint3 CameraCenter;
@@ -24,8 +27,7 @@ private:
     FVector3 PixelDeltaU;
     FVector3 PixelDeltaV;
 
-    std::vector<float> FloatImageData;
-    std::vector<unsigned char> UnsignedCharImageData;
+    std::vector<float> ImageData;
 };
 
 #endif // CAMERA_H

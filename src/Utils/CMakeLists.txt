@@ -19,4 +19,12 @@ set(SOURCE_STB_IMAGE
 
 add_library(StbImage STATIC ${SOURCE_STB_IMAGE} ${INCLUDE_STB_IMAGE})
 
+set (INCLUDE_UTILS
+        rng.h)
+
+set (SOURCE_UTILS
+        rng.cpp)
+
+add_library(UTILS STATIC ${SOURCE_UTILS} ${INCLUDE_UTILS})
+
 target_include_directories(Standalone PUBLIC .)
