@@ -48,7 +48,7 @@ bool FDielectric::Scatter(const FRay &Ray, const FHitRecord &HitRecord, FColor3 
     float CosTheta = fmin(Dot(-NormalizedRayDirection, HitRecord.Normal), 1.f);
     float SinTheta = sqrt(1.f - CosTheta * CosTheta);
 
-    bool CannotRefract = RelativeRefractionIndex * SinTheta > 0.f;
+    bool CannotRefract = (RelativeRefractionIndex * SinTheta) > 1.f;
     FVector3 Direction;
 
     if (CannotRefract)
