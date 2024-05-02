@@ -7,10 +7,10 @@ int main()
 {
     FHittableList World;
 
-    auto MaterialGround = std::make_shared<FLambertian>(FColor3{0.8f, 0.8f, 0.8f});
+    auto MaterialGround = std::make_shared<FLambertian>(FColor3{0.8f, 0.8f, 0.f});
     auto MaterialCenter = std::make_shared<FLambertian>(FColor3{0.1f, 0.2f, 0.5f});
-    auto MaterialLeft = std::make_shared<FMetal>(FColor3{0.8f, 0.8f, 0.8f});
-    auto MaterialRight = std::make_shared<FMetal>(FColor3{0.8f, 0.6f, 0.2f});
+    auto MaterialLeft = std::make_shared<FMetal>(FColor3{0.8f, 0.8f, 0.8f}, 0.3f);
+    auto MaterialRight = std::make_shared<FMetal>(FColor3{0.8f, 0.6f, 0.2f}, 1.f);
 
     World.Add(std::make_shared<FSphere>(FVector3{0, -100.5, -1}, 100.f, MaterialGround));
     World.Add(std::make_shared<FSphere>(FVector3{0, 0, -1.2}, 0.5f, MaterialCenter));

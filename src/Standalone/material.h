@@ -27,11 +27,12 @@ private:
 class FMetal : public FMaterial
 {
 public:
-    FMetal(const FColor3& AlbedoIn);
+    FMetal(const FColor3& AlbedoIn, float FuzzIn);
     bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const override;
 
 private:
     FColor3 Albedo;
+    float Fuzz;
 };
 
 #endif // MATERIAL_H
