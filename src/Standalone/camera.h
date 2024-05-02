@@ -29,6 +29,7 @@ private:
     FVector3 RandomVectorInUnitSphere();
     FVector3 RandomUnitVector();
     FVector3 RandomUnitVectorOnHemisphere(const FVector3& Normal);
+    float LinearToGamma(float Value) const;
 
     uint32_t ImageHeight;
     FPoint3 CameraCenter;

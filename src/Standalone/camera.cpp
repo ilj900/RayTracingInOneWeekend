@@ -127,6 +127,16 @@ FVector3 FCamera::RandomUnitVectorOnHemisphere(const FVector3& Normal)
     }
 }
 
+float FCamera::LinearToGamma(float Value) const
+{
+    if (Value > 0)
+    {
+        return sqrt(Value);
+    }
+
+    return 0;
+}
+
 void FCamera::SaveAsEXR(const std::string &Name)
 {
     std::vector<float> ImageDataEstimated(ImageWidth * ImageHeight * 3);
@@ -135,9 +145,9 @@ void FCamera::SaveAsEXR(const std::string &Name)
     for (uint32_t i = 0; i < ImageWidth * ImageHeight; ++i)
     {
         float InverseAccumulated = 1.f / ImageData[i * 4 + 3];
-        ImageDataEstimated[i * 3] = Intensity.Clamp(ImageData[i * 4] * InverseAccumulated);
-        ImageDataEstimated[i * 3 + 1] = Intensity.Clamp(ImageData[i * 4 + 1] * InverseAccumulated);
-        ImageDataEstimated[i * 3 + 2] = Intensity.Clamp(ImageData[i * 4 + 2] * InverseAccumulated);
+        ImageDataEstimated[i * 3] = Intensity.Clamp(LinearToGamma(ImageData[i * 4] * InverseAccumulated));
+        ImageDataEstimated[i * 3 + 1] = Intensity.Clamp(LinearToGamma(ImageData[i * 4 + 1] * InverseAccumulated));
+        ImageDataEstimated[i * 3 + 2] = Intensity.Clamp(LinearToGamma(ImageData[i * 4 + 2] * InverseAccumulated));
     }
 
     const char* Err = nullptr;
@@ -152,9 +162,9 @@ void FCamera::SaveAsBMP(const std::string &Name)
     for (uint32_t i = 0; i < ImageWidth * ImageHeight; ++i)
     {
         float InverseAccumulated = 1.f / ImageData[i * 4 + 3];
-        EstimatedUnsignedCharImageData[i * 3] = 256 * Intensity.Clamp(ImageData[i * 4] * InverseAccumulated);
-        EstimatedUnsignedCharImageData[i * 3 + 1] = 256 * Intensity.Clamp(ImageData[i * 4 + 1] * InverseAccumulated);
-        EstimatedUnsignedCharImageData[i * 3 + 2] = 256 * Intensity.Clamp(ImageData[i * 4 + 2] * InverseAccumulated);
+        EstimatedUnsignedCharImageData[i * 3] = 256 * Intensity.Clamp(LinearToGamma(ImageData[i * 4] * InverseAccumulated));
+        EstimatedUnsignedCharImageData[i * 3 + 1] = 256 * Intensity.Clamp(LinearToGamma(ImageData[i * 4 + 1] * InverseAccumulated));
+        EstimatedUnsignedCharImageData[i * 3 + 2] = 256 * Intensity.Clamp(LinearToGamma(ImageData[i * 4 + 2] * InverseAccumulated));
     }
 
     stbi_write_bmp(Name.c_str(), ImageWidth, ImageHeight, 3, EstimatedUnsignedCharImageData.data());
