@@ -35,4 +35,14 @@ private:
     float Fuzz;
 };
 
+class FDielectric : public FMaterial
+{
+public:
+    FDielectric(float RefractionIndexIn);
+    bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const override;
+
+private:
+    float RefractionIndex;
+};
+
 #endif // MATERIAL_H

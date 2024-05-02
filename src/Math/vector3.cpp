@@ -49,6 +49,15 @@ FVector3 Reflect(const FVector3& Vector, const FVector3& Normal)
     return Vector - 2.f * Dot(Vector, Normal) * Normal;
 }
 
+
+FVector3 Refract(const FVector3& Ray, const FVector3& Normal, float EtaiToEtat)
+{
+    auto CosTheta = fmin(Dot(-Ray, Normal), 1);
+    FVector3 RayOutPerp = EtaiToEtat * (Ray + CosTheta * Normal);
+    FVector3 RayOutParallel = -sqrt(fabs(1.f - RayOutPerp.Length2())) * Normal;
+    return RayOutPerp + RayOutParallel;
+}
+
 std::string FVector3::ToString() const
 {
     std::string Result = "FVector3(";

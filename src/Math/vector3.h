@@ -25,6 +25,7 @@ struct FVector3
 
 float Dot(const FVector3& A, const FVector3& B);
 FVector3 Reflect(const FVector3& Vector, const FVector3& Normal);
+FVector3 Refract(const FVector3& Ray, const FVector3& Normal, float EtaiToEtat);
 
 FVector3 operator-(const FVector3& A);
 bool operator==(const FVector3& A, const FVector3& B);
