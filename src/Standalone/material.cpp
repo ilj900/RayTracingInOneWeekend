@@ -8,7 +8,7 @@ bool FMaterial::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& A
     return false;
 }
 
-FLambertian::FLambertian(const FColor3& AlbedoIn) : Albedo(Albedo) {};
+FLambertian::FLambertian(const FColor3& AlbedoIn) : Albedo(AlbedoIn) {};
 
 bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const
 {
