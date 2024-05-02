@@ -22,3 +22,10 @@ bool FInterval::Surrounds(float X)
 {
     return (Min < X) && (X < Max);
 }
+
+float FInterval::Clamp(float X) const
+{
+    if (X < Min) return Min;
+    if (X > Max) return Max;
+    return X;
+}

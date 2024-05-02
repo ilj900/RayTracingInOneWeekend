@@ -72,13 +72,14 @@ void FCamera::WriteColor(const FColor3& PixelColor, uint32_t PixelIndex)
 void FCamera::SaveAsEXR(const std::string &Name)
 {
     std::vector<float> ImageDataEstimated(ImageWidth * ImageHeight * 3);
+    static const FInterval Intensity(0.f, 0.999f);
 
     for (uint32_t i = 0; i < ImageWidth * ImageHeight; ++i)
     {
         float InverseAccumulated = 1.f / ImageData[i * 4 + 3];
-        ImageDataEstimated[i * 3] = ImageData[i * 4] * InverseAccumulated;
-        ImageDataEstimated[i * 3 + 1] = ImageData[i * 4 + 1] * InverseAccumulated;
-        ImageDataEstimated[i * 3 + 2] = ImageData[i * 4 + 2] * InverseAccumulated;
+        ImageDataEstimated[i * 3] = Intensity.Clamp(ImageData[i * 4] * InverseAccumulated);
+        ImageDataEstimated[i * 3 + 1] = Intensity.Clamp(ImageData[i * 4 + 1] * InverseAccumulated);
+        ImageDataEstimated[i * 3 + 2] = Intensity.Clamp(ImageData[i * 4 + 2] * InverseAccumulated);
     }
 
     const char* Err = nullptr;
@@ -88,13 +89,14 @@ void FCamera::SaveAsEXR(const std::string &Name)
 void FCamera::SaveAsBMP(const std::string &Name)
 {
     std::vector<unsigned char> EstimatedUnsignedCharImageData(ImageWidth * ImageHeight * 3);
+    static const FInterval Intensity(0.f, 0.999f);
 
     for (uint32_t i = 0; i < ImageWidth * ImageHeight; ++i)
     {
         float InverseAccumulated = 1.f / ImageData[i * 4 + 3];
-        EstimatedUnsignedCharImageData[i * 3] = 255.999f * ImageData[i * 4] * InverseAccumulated;
-        EstimatedUnsignedCharImageData[i * 3 + 1] = 255.999f * ImageData[i * 4 + 1] * InverseAccumulated;
-        EstimatedUnsignedCharImageData[i * 3 + 2] = 255.999f * ImageData[i * 4 + 2] * InverseAccumulated;
+        EstimatedUnsignedCharImageData[i * 3] = 256 * Intensity.Clamp(ImageData[i * 4] * InverseAccumulated);
+        EstimatedUnsignedCharImageData[i * 3 + 1] = 256 * Intensity.Clamp(ImageData[i * 4 + 1] * InverseAccumulated);
+        EstimatedUnsignedCharImageData[i * 3 + 2] = 256 * Intensity.Clamp(ImageData[i * 4 + 2] * InverseAccumulated);
     }
 
     stbi_write_bmp(Name.c_str(), ImageWidth, ImageHeight, 3, EstimatedUnsignedCharImageData.data());

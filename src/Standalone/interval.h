@@ -11,10 +11,9 @@ public:
     FInterval(float MinIn, float MaxIn);
 
     float Size();
-
     bool Contains(float X);
-
     bool Surrounds(float X);
+    float Clamp(float X) const;
 
     static const FInterval Empty;
     static const FInterval Universe;
