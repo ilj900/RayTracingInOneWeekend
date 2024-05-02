@@ -32,7 +32,7 @@ private:
 
     std::vector<float> ImageData;
 
-    RNG1D RNG;
+    RNG2D RNG;
 };
 
 #endif // CAMERA_H

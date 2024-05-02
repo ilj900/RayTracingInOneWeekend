@@ -40,7 +40,8 @@ void FCamera::Initialize()
 FRay FCamera::GetRay(uint32_t X, uint32_t Y)
 {
     auto PixelUpperLeft = Pixel00 + (PixelDeltaU * X) + (PixelDeltaV * Y);
-    auto JitteredPixel = PixelUpperLeft + (PixelDeltaU * RNG()) + (PixelDeltaV * RNG());
+    auto [JitterX, JitterY] = RNG();
+    auto JitteredPixel = PixelUpperLeft + (PixelDeltaU * JitterX) + (PixelDeltaV * JitterY);
     auto RayDirection = JitteredPixel - CameraCenter; /// Not normalized
     FRay Ray(CameraCenter, RayDirection);
     return Ray;
