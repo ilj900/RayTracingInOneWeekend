@@ -14,7 +14,7 @@ FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &Worl
 
     FHitRecord HitRecord;
 
-    if (World.Hit(Ray, {0, INFINITY}, HitRecord))
+    if (World.Hit(Ray, {0.0001f, INFINITY}, HitRecord))
     {
         FVector3 Direction = RandomUnitVectorOnHemisphere(HitRecord.Normal);
         return 0.5f * RayColor(FRay(HitRecord.Position, Direction), Depth - 1, World);

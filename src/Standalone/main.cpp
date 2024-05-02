@@ -12,6 +12,8 @@ int main()
     FCamera Camera;
     Camera.AspectRatio = 16.f / 9.f;
     Camera.ImageWidth = 1920;
+    Camera.IterationsPerPixel = 10;
+    Camera.MaxDepth = 10;
 
     Camera.Render(World);
 
