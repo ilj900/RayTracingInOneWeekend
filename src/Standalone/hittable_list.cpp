@@ -23,7 +23,7 @@ bool FHittableList::Hit(const FRay& Ray, float TMin, float TMax, FHitRecord& Hit
 
     for (const auto& Hittable : Hittables)
     {
-        if (Hittable->Hit(Ray, TMin, TMax, HitRecord))
+        if (Hittable->Hit(Ray, TMin, ClosestSoFar, HitRecord))
         {
             bHitAnything = true;
             ClosestSoFar = HitRecord.T;
