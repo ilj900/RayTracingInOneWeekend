@@ -4,6 +4,7 @@ set(INCLUDE_MATH
         vector3.h)
 
 set(SOURCE_MATH
+        color3.cpp
         ray.cpp
         vector3.cpp)
 
