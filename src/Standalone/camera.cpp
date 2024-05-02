@@ -5,13 +5,19 @@
 
 #include <iostream>
 
-FColor3 FCamera::RayColor(const FRay &Ray, const FHittable &World) const
+FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &World)
 {
+    if (Depth <= 0)
+    {
+        return {};
+    }
+
     FHitRecord HitRecord;
 
     if (World.Hit(Ray, {0, INFINITY}, HitRecord))
     {
-        return 0.5f * (HitRecord.Normal + FColor3(1, 1, 1));
+        FVector3 Direction = RandomUnitVectorOnHemisphere(HitRecord.Normal);
+        return 0.5f * RayColor(FRay(HitRecord.Position, Direction), Depth - 1, World);
     }
 
     FVector3 UnitDirection = Ray.GetDirection().GetNormalized();
@@ -40,7 +46,7 @@ void FCamera::Initialize()
 FRay FCamera::GetRay(uint32_t X, uint32_t Y)
 {
     auto PixelUpperLeft = Pixel00 + (PixelDeltaU * X) + (PixelDeltaV * Y);
-    auto [JitterX, JitterY] = RNG();
+    auto [JitterX, JitterY] = RNG2();
     auto JitteredPixel = PixelUpperLeft + (PixelDeltaU * JitterX) + (PixelDeltaV * JitterY);
     auto RayDirection = JitteredPixel - CameraCenter; /// Not normalized
     FRay Ray(CameraCenter, RayDirection);
@@ -60,7 +66,7 @@ void FCamera::Render(const FHittable &World)
             for (uint32_t k = 0; k < IterationsPerPixel; ++k)
             {
                 auto Ray = GetRay(j, i);
-                FColor3 PixelColor = RayColor(Ray, World);
+                FColor3 PixelColor = RayColor(Ray, MaxDepth, World);
                 WriteColor(PixelColor, i * ImageWidth + j);
             }
         }
@@ -75,6 +81,50 @@ void FCamera::WriteColor(const FColor3& PixelColor, uint32_t PixelIndex)
     ImageData[PixelIndex * 4 + 1] += PixelColor.Y;
     ImageData[PixelIndex * 4 + 2] += PixelColor.Z;
     ImageData[PixelIndex * 4 + 3] += 1.f;
+}
+
+FVector3 FCamera::RandomVector3()
+{
+    auto [X, Y, Z] = RNG3();
+    return FVector3{X, Y, Z};
+}
+
+FVector3 FCamera::RandomVector3(float Min, float Max)
+{
+    auto RandomVector = RandomVector3();
+    RandomVector = FVector3(Min, Min, Min) + (FVector3(Max, Max, Max) - FVector3(Min, Min, Min)) * RandomVector;
+    return RandomVector;
+}
+
+FVector3 FCamera::RandomVectorInUnitSphere()
+{
+    while (true)
+    {
+        auto Candidate = RandomVector3(-1, 1);
+        if (Candidate.Length2() < 1)
+        {
+            return Candidate;
+        }
+    }
+}
+
+FVector3 FCamera::RandomUnitVector()
+{
+    return RandomVectorInUnitSphere().GetNormalized();
+}
+
+FVector3 FCamera::RandomUnitVectorOnHemisphere(const FVector3& Normal)
+{
+    auto OnUnitSphere = RandomUnitVector();
+
+    if (Dot(OnUnitSphere, Normal) > 0.f)
+    {
+        return OnUnitSphere;
+    }
+    else
+    {
+        return -OnUnitSphere;
+    }
 }
 
 void FCamera::SaveAsEXR(const std::string &Name)

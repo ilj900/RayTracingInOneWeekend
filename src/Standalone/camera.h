@@ -17,12 +17,18 @@ public:
     float AspectRatio = 16.f / 9.f;
     uint32_t ImageWidth = 1920;
     uint32_t IterationsPerPixel = 10;
+    uint32_t MaxDepth = 10;
 
 private:
     void Initialize();
     FRay GetRay(uint32_t X, uint32_t Y);
-    FColor3 RayColor(const FRay& Ray, const FHittable& World) const;
+    FColor3 RayColor(const FRay& Ray, uint32_t Depth, const FHittable& World);
     void WriteColor(const FColor3& PixelColor, uint32_t PixelIndex);
+    FVector3 RandomVector3();
+    FVector3 RandomVector3(float Min, float Max);
+    FVector3 RandomVectorInUnitSphere();
+    FVector3 RandomUnitVector();
+    FVector3 RandomUnitVectorOnHemisphere(const FVector3& Normal);
 
     uint32_t ImageHeight;
     FPoint3 CameraCenter;
@@ -32,7 +38,8 @@ private:
 
     std::vector<float> ImageData;
 
-    RNG2D RNG;
+    RNG2D RNG2;
+    RNG3D RNG3;
 };
 
 #endif // CAMERA_H
