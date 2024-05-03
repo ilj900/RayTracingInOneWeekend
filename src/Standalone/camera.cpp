@@ -115,8 +115,7 @@ void FCamera::Render(const FHittable &World)
         }
     };
 
-    uint32_t ThreadsCount = std::thread::hardware_concurrency() / 4;
-    ThreadsCount = ThreadsCount > 0 ? ThreadsCount : 1;
+    uint32_t ThreadsCount = std::thread::hardware_concurrency();
 
     std::vector<std::vector<uint32_t>> LinesByThread(ThreadsCount);
 

@@ -50,6 +50,7 @@ private:
 
 double RandomDouble();
 double RandomDouble(double Min, double Max);
+int RandomInt(int Min, int Max);
 
 FVector3 RandomVector3();
 FVector3 RandomVector3(double Min, double Max);

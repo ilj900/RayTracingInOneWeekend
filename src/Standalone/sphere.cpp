@@ -1,9 +1,18 @@
 #include "sphere.h"
 
-FSphere::FSphere(const FPoint3& CenterIn, double RadiusIn, std::shared_ptr<FMaterial> MaterialIn) : Center1(CenterIn), Radius(RadiusIn), Material(MaterialIn), bIsMooving(false) {};
+FSphere::FSphere(const FPoint3& CenterIn, double RadiusIn, std::shared_ptr<FMaterial> MaterialIn) : Center1(CenterIn), Radius(RadiusIn), Material(MaterialIn), bIsMooving(false)
+{
+    auto RadiusVector = FVector3(Radius, Radius, Radius);
+    BBox = FAABB(Center1 - RadiusVector, Center1 + RadiusVector);
+};
 
 FSphere::FSphere(const FPoint3& Center1In, const FPoint3& Center2In, double RadiusIn, std::shared_ptr<FMaterial> MaterialIn) : Center1(Center1In), Radius(RadiusIn), Material(MaterialIn), bIsMooving(true)
 {
+    auto RadiusVector = FVector3(Radius, Radius, Radius);
+    auto BBox1 = FAABB(Center1 - RadiusVector, Center1 + RadiusVector);
+    auto BBox2 = FAABB(Center2In - RadiusVector, Center2In + RadiusVector);
+    BBox = FAABB(BBox1, BBox1);
+
     CenterDirection = Center2In - Center1In;
 };
 
@@ -43,6 +52,11 @@ bool FSphere::Hit(const FRay &Ray, FInterval Interval, FHitRecord& HitRecordOut)
     HitRecordOut.Material = Material;
 
     return true;
+}
+
+FAABB FSphere::BoundingBox() const
+{
+    return BBox;
 }
 
 FPoint3 FSphere::SphereCenter(double Time) const

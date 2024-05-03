@@ -1,6 +1,7 @@
 #ifndef HITTABLE_LIST_H
 #define HITTABLE_LIST_H
 
+#include "aabb.h"
 #include "hittable.h"
 
 #include <memory>
@@ -18,6 +19,11 @@ public:
     void Add(std::shared_ptr<FHittable> Hittable);
 
     bool Hit(const FRay& Ray, FInterval Interval, FHitRecord& HitRecordOut) const override;
+
+    FAABB BoundingBox() const override;
+
+private:
+    FAABB BBox;
 };
 
 #endif // HITTABLE_LIST_H

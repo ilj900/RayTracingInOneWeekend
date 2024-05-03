@@ -1,6 +1,7 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
 
+#include "aabb.h"
 #include "interval.h"
 #include "ray.h"
 
@@ -26,6 +27,8 @@ public:
     virtual ~FHittable() = default;
 
     virtual bool Hit(const FRay& Ray, FInterval Interval, FHitRecord& HitRecordOut) const = 0;
+
+    virtual FAABB BoundingBox() const = 0;
 };
 
 #endif // HITTABLE_H

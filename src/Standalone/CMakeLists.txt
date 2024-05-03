@@ -1,4 +1,6 @@
 set(INCLUDE
+        aabb.h
+        bvh_node.h
         camera.h
         common_defines.h
         hittable.h
@@ -8,6 +10,8 @@ set(INCLUDE
         sphere.h)
 
 set(SOURCE
+        aabb.cpp
+        bvh_node.cpp
         camera.cpp
         hittable.cpp
         hittable_list.cpp

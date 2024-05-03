@@ -15,6 +15,7 @@ void FHittableList::Clear()
 void FHittableList::Add(std::shared_ptr<FHittable> Hittable)
 {
     Hittables.push_back(Hittable);
+    BBox = FAABB(BBox, Hittable->BoundingBox());
 }
 
 bool FHittableList::Hit(const FRay& Ray, FInterval Interval, FHitRecord& HitRecordOut) const
@@ -34,4 +35,9 @@ bool FHittableList::Hit(const FRay& Ray, FInterval Interval, FHitRecord& HitReco
     }
 
     return bHitAnything;
+}
+
+FAABB FHittableList::BoundingBox() const
+{
+    return BBox;
 }

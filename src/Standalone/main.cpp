@@ -1,4 +1,4 @@
-#include "common_defines.h"
+#include "bvh_node.h"
 #include "camera.h"
 #include "hittable_list.h"
 #include "material.h"
@@ -55,10 +55,12 @@ int main()
     auto Material3 = std::make_shared<FMetal>(FColor3(0.7, 0.6, 0.5), 0);
     World.Add((std::make_shared<FSphere>(FPoint3(4, 1, 0) , 1, Material3)));
 
+    World = FHittableList(std::make_shared<FBVHNode>(World));
+
     FCamera Camera;
     Camera.AspectRatio = 16.0 / 9.0;
     Camera.ImageWidth = 1920;
-    Camera.IterationsPerPixel = 30;
+    Camera.IterationsPerPixel = 10;
     Camera.MaxDepth = 10;
     Camera.VFOV = 20;
     Camera.LookFrom = {13, 2, 3};

@@ -81,6 +81,36 @@ bool FVector3::NearZero() const
     return (std::fabs(X) < Epsilon && std::fabs(Y) < Epsilon && std::fabs(Z) < Epsilon);
 }
 
+double& FVector3::operator[](std::size_t Index)
+{
+    if (Index == 1)
+    {
+        return Y;
+    }
+
+    if (Index == 2)
+    {
+        return Z;
+    }
+
+    return X;
+}
+
+const double& FVector3::operator[](std::size_t Index) const
+{
+    if (Index == 1)
+    {
+        return Y;
+    }
+
+    if (Index == 2)
+    {
+        return Z;
+    }
+
+    return X;
+}
+
 FVector3 operator-(const FVector3& A)
 {
     return {-A.X, -A.Y, -A.Z};

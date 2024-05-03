@@ -16,6 +16,8 @@ struct FVector3
     double Length2() const;
     std::string ToString() const;
     bool NearZero() const;
+    double& operator[](std::size_t Index);
+    const double& operator[](std::size_t Index) const;
 
     /// Data
     double X = 0;

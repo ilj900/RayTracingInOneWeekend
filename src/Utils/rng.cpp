@@ -57,6 +57,11 @@ double RandomDouble(double Min, double Max)
     return Min + (Max - Min) * Value;
 }
 
+int RandomInt(int Min, int Max)
+{
+    return int(RandomDouble(Min, Max + 1));
+}
+
 FVector3 RandomVector3()
 {
     static RNG3D RNG3;

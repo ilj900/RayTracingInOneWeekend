@@ -10,6 +10,7 @@ public:
     FSphere(const FPoint3& Center1In, const FPoint3& Center2In, double RadiusIn, std::shared_ptr<FMaterial> MaterialIn);
 
     bool Hit(const FRay& Ray, FInterval Interval, FHitRecord& HitRecordOut) const override;
+    FAABB BoundingBox() const override;
 
 private:
     FPoint3 SphereCenter(double Time) const;
@@ -18,6 +19,7 @@ private:
     std::shared_ptr<FMaterial> Material;
     bool bIsMooving;
     FVector3 CenterDirection;
+    FAABB BBox;
 };
 
 #endif // SPHERE_H
