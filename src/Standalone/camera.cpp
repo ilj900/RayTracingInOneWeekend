@@ -41,18 +41,24 @@ void FCamera::Initialize()
     ImageHeight = (ImageHeight < 1) ? 1 : ImageHeight;
     ImageData = std::vector<float>(ImageWidth * ImageHeight * 4);
 
-    CameraCenter = {0, 0, 0};
-    float FocalLength = 1.0;
+    CameraCenter = LookFrom;
+    
+    float FocalLength = (LookFrom - LookAt).Length();
     float Theta = DegreesToRadians(VFOV);
     float H = tan(Theta * 0.5f);
     float ViewportHeight = 2.f * H * FocalLength;
     float ViewportWidth = ViewportHeight * (float(ImageWidth) / float(ImageHeight));
-    FVector3 ViewportU{ViewportWidth, 0, 0};
-    FVector3 ViewportV{0, -ViewportHeight, 0};
+
+    W = (LookFrom - LookAt).GetNormalized();
+    U = Cross(Up, W).GetNormalized();
+    V = Cross(W, U);
+
+    FVector3 ViewportU = ViewportWidth * U;
+    FVector3 ViewportV = -ViewportHeight * V;
     PixelDeltaU = ViewportU / float(ImageWidth);
     PixelDeltaV = ViewportV / float(ImageHeight);
 
-    Pixel00 = CameraCenter - FVector3{0, 0, FocalLength} - (ViewportU * 0.5f) - (ViewportV * 0.5f);
+    Pixel00 = CameraCenter - (FocalLength * W) - ViewportU * 0.5 - ViewportV * 0.5;;
 }
 
 FRay FCamera::GetRay(uint32_t X, uint32_t Y)

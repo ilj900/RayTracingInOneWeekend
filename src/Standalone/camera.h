@@ -19,6 +19,9 @@ public:
     uint32_t IterationsPerPixel = 10;
     uint32_t MaxDepth = 10;
     float VFOV = 90;
+    FPoint3 LookFrom = {0, 0, 0};
+    FPoint3 LookAt = {0, 0, -1};
+    FVector3 Up = {0, 1, 0};
 
 private:
     void Initialize();
@@ -32,6 +35,9 @@ private:
     FVector3 Pixel00;
     FVector3 PixelDeltaU;
     FVector3 PixelDeltaV;
+    FVector3 U;
+    FVector3 V;
+    FVector3 W;
 
     std::vector<float> ImageData;
 

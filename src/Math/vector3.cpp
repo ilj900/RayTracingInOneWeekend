@@ -44,6 +44,13 @@ float Dot(const FVector3& A, const FVector3& B)
     return A.X * B.X + A.Y * B.Y + A.Z * B.Z;
 }
 
+FVector3 Cross(const FVector3& A, const FVector3& B)
+{
+    return {A.Y * B.Z - A.Z * B.Y,
+            A.Z * B.X - A.X * B.Z,
+            A.X * B.Y - A.Y * B.X};
+}
+
 FVector3 Reflect(const FVector3& Vector, const FVector3& Normal)
 {
     return Vector - 2.f * Dot(Vector, Normal) * Normal;
