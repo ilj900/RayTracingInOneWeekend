@@ -15,8 +15,8 @@ int main()
     {
         for (int b = -11; b < 11; ++b)
         {
-            auto ChooseMaterial = RandomFloat();
-            FPoint3 Center = FPoint3 (a + 0.9 * RandomFloat(), 0.2, b + 0.9 * RandomFloat());
+            auto ChooseMaterial = RandomDouble();
+            FPoint3 Center = FPoint3 (a + 0.9 * RandomDouble(), 0.2, b + 0.9 * RandomDouble());
 
             if ((Center - FPoint3(4, 0.2, 0)).Length() > 0.9)
             {
@@ -31,7 +31,7 @@ int main()
                 else if (ChooseMaterial < 0.95)
                 {
                     auto [R, G, B] = RNG3();
-                    auto Fuzz = RandomFloat(0, 0.5);
+                    auto Fuzz = RandomDouble(0, 0.5);
                     SphereMaterial = std::make_shared<FMetal>(FColor3(R, G, B), Fuzz);
                 }
                 else

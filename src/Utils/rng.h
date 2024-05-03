@@ -10,12 +10,12 @@ class RNG1D
 {
 public:
     RNG1D();
-    RNG1D(float Min, float Max);
+    RNG1D(double Min, double Max);
 
-    float operator()();
+    double operator()();
 
 private:
-    std::uniform_real_distribution<float>  Distribution;
+    std::uniform_real_distribution<double>  Distribution;
     std::mt19937 Generator;
 };
 
@@ -23,13 +23,13 @@ class RNG2D
 {
 public:
     RNG2D();
-    RNG2D(float MinX, float MaxX, float MinY, float MaxY);
+    RNG2D(double MinX, double MaxX, double MinY, double MaxY);
 
-    std::tuple<float, float> operator()();
+    std::tuple<double, double> operator()();
 
 private:
-    std::uniform_real_distribution<float>  DistributionX;
-    std::uniform_real_distribution<float>  DistributionY;
+    std::uniform_real_distribution<double>  DistributionX;
+    std::uniform_real_distribution<double>  DistributionY;
     std::mt19937 Generator;
 };
 
@@ -37,22 +37,22 @@ class RNG3D
 {
 public:
     RNG3D();
-    RNG3D(float MinX, float MaxX, float MinY, float MaxY, float MinZ, float MaxZ);
+    RNG3D(double MinX, double MaxX, double MinY, double MaxY, double MinZ, double MaxZ);
 
-    std::tuple<float, float, float> operator()();
+    std::tuple<double, double, double> operator()();
 
 private:
-    std::uniform_real_distribution<float>  DistributionX;
-    std::uniform_real_distribution<float>  DistributionY;
-    std::uniform_real_distribution<float>  DistributionZ;
+    std::uniform_real_distribution<double>  DistributionX;
+    std::uniform_real_distribution<double>  DistributionY;
+    std::uniform_real_distribution<double>  DistributionZ;
     std::mt19937 Generator;
 };
 
-float RandomFloat();
-float RandomFloat(float Min, float Max);
+double RandomDouble();
+double RandomDouble(double Min, double Max);
 
 FVector3 RandomVector3();
-FVector3 RandomVector3(float Min, float Max);
+FVector3 RandomVector3(double Min, double Max);
 FVector3 RandomVectorInUnitSphere();
 FVector3 RandomUnitVector();
 FVector3 RandomUnitVectorOnHemisphere(const FVector3& Normal);
