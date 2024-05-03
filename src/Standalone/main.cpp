@@ -27,19 +27,21 @@ int main()
                 {
                     auto [R, G, B] = RNG3();
                     SphereMaterial = std::make_shared<FLambertian>(FColor3(R, G, B));
+                    auto Center2 = Center + FVector3(0, RandomDouble(0, 0.5), 0);
+                    World.Add((std::make_shared<FSphere>(Center, Center2, 0.2, SphereMaterial)));
                 }
                 else if (ChooseMaterial < 0.95)
                 {
                     auto [R, G, B] = RNG3();
                     auto Fuzz = RandomDouble(0, 0.5);
                     SphereMaterial = std::make_shared<FMetal>(FColor3(R, G, B), Fuzz);
+                    World.Add((std::make_shared<FSphere>(Center, 0.2, SphereMaterial)));
                 }
                 else
                 {
                     SphereMaterial = std::make_shared<FDielectric>(1.5);
+                    World.Add((std::make_shared<FSphere>(Center, 0.2, SphereMaterial)));
                 }
-
-                World.Add((std::make_shared<FSphere>(Center, 0.2, SphereMaterial)));
             }
         }
     }
@@ -56,7 +58,7 @@ int main()
     FCamera Camera;
     Camera.AspectRatio = 16.0 / 9.0;
     Camera.ImageWidth = 1920;
-    Camera.IterationsPerPixel = 10;
+    Camera.IterationsPerPixel = 30;
     Camera.MaxDepth = 10;
     Camera.VFOV = 20;
     Camera.LookFrom = {13, 2, 3};

@@ -82,7 +82,7 @@ FRay FCamera::GetRay(uint32_t X, uint32_t Y)
     }
 
     auto RayDirection = JitteredPixel - RayOrigin; /// Not normalized
-    FRay Ray(RayOrigin, RayDirection);
+    FRay Ray(RayOrigin, RayDirection, RandomDouble());
     return Ray;
 }
 
@@ -115,7 +115,9 @@ void FCamera::Render(const FHittable &World)
         }
     };
 
-    uint32_t ThreadsCount = std::thread::hardware_concurrency();
+    uint32_t ThreadsCount = std::thread::hardware_concurrency() / 4;
+    ThreadsCount = ThreadsCount > 0 ? ThreadsCount : 1;
+
     std::vector<std::vector<uint32_t>> LinesByThread(ThreadsCount);
 
     for (uint32_t i = 0; i < ImageHeight; ++i)

@@ -20,7 +20,7 @@ bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3&
         ScatterDirection = HitRecord.Normal;
     }
 
-    Scattered = FRay(HitRecord.Position, ScatterDirection);
+    Scattered = FRay(HitRecord.Position, ScatterDirection, Ray.GetTime());
     Attenuation = Albedo;
 
     return true;
@@ -32,7 +32,7 @@ bool FMetal::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Atte
 {
     FVector3 Reflected = Reflect(Ray.GetDirection(), HitRecord.Normal);
     Reflected = Reflected.GetNormalized() + (Fuzz * RandomUnitVector());
-    Scattered = FRay(HitRecord.Position, Reflected);
+    Scattered = FRay(HitRecord.Position, Reflected, Ray.GetTime());
     Attenuation = Albedo;
 
     return Dot(Scattered.GetDirection(), HitRecord.Normal) > 0;
@@ -61,7 +61,7 @@ bool FDielectric::Scatter(const FRay &Ray, const FHitRecord &HitRecord, FColor3 
         Direction = Refract(NormalizedRayDirection, HitRecord.Normal, RelativeRefractionIndex);
     }
 
-    Scattered = {HitRecord.Position, Direction};
+    Scattered = {HitRecord.Position, Direction, Ray.GetTime()};
 
     return true;
 }
