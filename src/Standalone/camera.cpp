@@ -1,6 +1,7 @@
 #include "stb_image_write.h"
 #include "tinyexr.h"
 
+#include "common_defines.h"
 #include "camera.h"
 #include "material.h"
 
@@ -22,7 +23,8 @@ FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &Worl
 
         if (HitRecord.Material->Scatter(Ray, HitRecord, Attenuation, Scattered))
         {
-            return Attenuation * RayColor(Scattered, Depth - 1, World);
+            FColor3 Color = RayColor(Scattered, Depth - 1, World);
+            return Attenuation * Color;
         }
 
         return {0, 0, 0};
@@ -41,7 +43,9 @@ void FCamera::Initialize()
 
     CameraCenter = {0, 0, 0};
     float FocalLength = 1.0;
-    float ViewportHeight = 2.f;
+    float Theta = DegreesToRadians(VFOV);
+    float H = tan(Theta * 0.5f);
+    float ViewportHeight = 2.f * H * FocalLength;
     float ViewportWidth = ViewportHeight * (float(ImageWidth) / float(ImageHeight));
     FVector3 ViewportU{ViewportWidth, 0, 0};
     FVector3 ViewportV{0, -ViewportHeight, 0};
@@ -71,6 +75,11 @@ void FCamera::Render(const FHittable &World)
 
         for(uint32_t j = 0; j < ImageWidth; ++j)
         {
+            if (i == 500 && j == 500)
+            {
+                int dd = 0;
+                dd++;
+            }
             for (uint32_t k = 0; k < IterationsPerPixel; ++k)
             {
                 auto Ray = GetRay(j, i);

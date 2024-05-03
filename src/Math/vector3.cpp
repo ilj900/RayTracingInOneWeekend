@@ -141,7 +141,7 @@ FVector3 operator-(const FVector3& A, const FVector3& B)
 
 FVector3 operator*(const FVector3& A, const FVector3& B)
 {
-    return {A.Y * B.X, A.Y * B.Y, A.Z * B.Z};
+    return {A.X * B.X, A.Y * B.Y, A.Z * B.Z};
 }
 
 FVector3 operator*(const FVector3& A, float Val)

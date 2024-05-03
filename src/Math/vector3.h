@@ -18,9 +18,9 @@ struct FVector3
     bool NearZero() const;
 
     /// Data
-    float X;
-    float Y;
-    float Z;
+    float X = 0;
+    float Y = 0;
+    float Z = 0;
 };
 
 float Dot(const FVector3& A, const FVector3& B);

@@ -18,6 +18,7 @@ public:
     uint32_t ImageWidth = 1920;
     uint32_t IterationsPerPixel = 10;
     uint32_t MaxDepth = 10;
+    float VFOV = 90;
 
 private:
     void Initialize();
