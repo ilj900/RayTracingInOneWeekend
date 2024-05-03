@@ -14,23 +14,23 @@ public:
     void SaveAsEXR(const std::string& Name);
     void SaveAsBMP(const std::string& Name);
 
-    float AspectRatio = 16.f / 9.f;
+    double AspectRatio = 16.0 / 9.0;
     uint32_t ImageWidth = 1920;
     uint32_t IterationsPerPixel = 10;
     uint32_t MaxDepth = 10;
-    float VFOV = 90;
+    double VFOV = 90;
     FPoint3 LookFrom = {0, 0, 0};
     FPoint3 LookAt = {0, 0, -1};
     FVector3 Up = {0, 1, 0};
-    float DefocusAngle = 0;
-    float FocusDistance = 10;
+    double DefocusAngle = 0;
+    double FocusDistance = 10;
 
 private:
     void Initialize();
     FRay GetRay(uint32_t X, uint32_t Y);
     FColor3 RayColor(const FRay& Ray, uint32_t Depth, const FHittable& World);
     void WriteColor(const FColor3& PixelColor, uint32_t PixelIndex);
-    float LinearToGamma(float Value) const;
+    double LinearToGamma(double Value) const;
 
     uint32_t ImageHeight;
     FPoint3 CameraCenter;
@@ -43,7 +43,7 @@ private:
     FVector3 DefocusDiscU;
     FVector3 DefocusDiscV;
 
-    std::vector<float> ImageData;
+    std::vector<double> ImageData;
 
     RNG2D RNG2;
     RNG3D RNG3;

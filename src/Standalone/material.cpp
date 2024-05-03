@@ -26,7 +26,7 @@ bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3&
     return true;
 }
 
-FMetal::FMetal(const FColor3& AlbedoIn, float FuzzIn) : Albedo(AlbedoIn), Fuzz(FuzzIn) {};
+FMetal::FMetal(const FColor3& AlbedoIn, double FuzzIn) : Albedo(AlbedoIn), Fuzz(FuzzIn) {};
 
 bool FMetal::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const
 {
@@ -35,21 +35,21 @@ bool FMetal::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Atte
     Scattered = FRay(HitRecord.Position, Reflected);
     Attenuation = Albedo;
 
-    return Dot(Scattered.GetDirection(), HitRecord.Normal) > 0.f;
+    return Dot(Scattered.GetDirection(), HitRecord.Normal) > 0;
 }
 
-FDielectric::FDielectric(float RefractionIndexIn) : RefractionIndex(RefractionIndexIn) {};
+FDielectric::FDielectric(double RefractionIndexIn) : RefractionIndex(RefractionIndexIn) {};
 
 bool FDielectric::Scatter(const FRay &Ray, const FHitRecord &HitRecord, FColor3 &Attenuation, FRay &Scattered) const
 {
     Attenuation = {1, 1, 1};
-    float RelativeRefractionIndex = HitRecord.bFrontFace ? (1.f / RefractionIndex) : RefractionIndex;
+    double RelativeRefractionIndex = HitRecord.bFrontFace ? (1 / RefractionIndex) : RefractionIndex;
     auto NormalizedRayDirection = Ray.GetDirection().GetNormalized();
 
-    float CosTheta = fmin(Dot(-NormalizedRayDirection, HitRecord.Normal), 1.f);
-    float SinTheta = sqrt(1.f - CosTheta * CosTheta);
+    double CosTheta = fmin(Dot(-NormalizedRayDirection, HitRecord.Normal), 1);
+    double SinTheta = sqrt(1 - CosTheta * CosTheta);
 
-    bool CannotRefract = (RelativeRefractionIndex * SinTheta) > 1.f;
+    bool CannotRefract = (RelativeRefractionIndex * SinTheta) > 1;
     FVector3 Direction;
 
     if (CannotRefract || (Reflectance(CosTheta, RelativeRefractionIndex) > RandomFloat()))
@@ -66,9 +66,9 @@ bool FDielectric::Scatter(const FRay &Ray, const FHitRecord &HitRecord, FColor3 
     return true;
 }
 
-float FDielectric::Reflectance(float Cosine, float RefractionIndex)
+double FDielectric::Reflectance(double Cosine, double RefractionIndex)
 {
-    float R0 = (1 - RefractionIndex) / (1 + RefractionIndex);
+    double R0 = (1 - RefractionIndex) / (1 + RefractionIndex);
     R0 = R0 * R0;
     return R0 + (1 - R0) * pow(1 - Cosine, 5);
 }

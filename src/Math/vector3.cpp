@@ -9,7 +9,7 @@
 
 FVector3 FVector3::GetNormalized() const
 {
-    float L = std::sqrt(X * X + Y * Y + Z * Z);
+    double L = std::sqrt(X * X + Y * Y + Z * Z);
 
     if (L <= 0.000001f)
     {
@@ -29,17 +29,17 @@ FVector3& FVector3::Normalize()
     return *this;
 }
 
-float FVector3::Length() const
+double FVector3::Length() const
 {
     return sqrt(X * X + Y * Y + Z * Z);
 }
 
-float FVector3::Length2() const
+double FVector3::Length2() const
 {
     return X * X + Y * Y + Z * Z;
 }
 
-float Dot(const FVector3& A, const FVector3& B)
+double Dot(const FVector3& A, const FVector3& B)
 {
     return A.X * B.X + A.Y * B.Y + A.Z * B.Z;
 }
@@ -53,15 +53,15 @@ FVector3 Cross(const FVector3& A, const FVector3& B)
 
 FVector3 Reflect(const FVector3& Vector, const FVector3& Normal)
 {
-    return Vector - 2.f * Dot(Vector, Normal) * Normal;
+    return Vector - 2 * Dot(Vector, Normal) * Normal;
 }
 
 
-FVector3 Refract(const FVector3& Ray, const FVector3& Normal, float EtaiToEtat)
+FVector3 Refract(const FVector3& Ray, const FVector3& Normal, double EtaiToEtat)
 {
     auto CosTheta = fmin(Dot(-Ray, Normal), 1);
     FVector3 RayOutPerp = EtaiToEtat * (Ray + CosTheta * Normal);
-    FVector3 RayOutParallel = -sqrt(fabs(1.f - RayOutPerp.Length2())) * Normal;
+    FVector3 RayOutParallel = -sqrt(fabs(1 - RayOutPerp.Length2())) * Normal;
     return RayOutPerp + RayOutParallel;
 }
 
@@ -77,7 +77,7 @@ std::string FVector3::ToString() const
 
 bool FVector3::NearZero() const
 {
-    static float Epsilon = 1e-8;
+    static double Epsilon = 1e-8;
     return (std::fabs(X) < Epsilon && std::fabs(Y) < Epsilon && std::fabs(Z) < Epsilon);
 }
 
@@ -118,7 +118,7 @@ FVector3& operator*=(FVector3& A, const FVector3& B)
     return A;
 }
 
-FVector3& operator*=(FVector3& A, float Val)
+FVector3& operator*=(FVector3& A, double Val)
 {
     A.X *= Val;
     A.Y *= Val;
@@ -127,7 +127,7 @@ FVector3& operator*=(FVector3& A, float Val)
     return A;
 }
 
-FVector3& operator/=(FVector3& A, float Val)
+FVector3& operator/=(FVector3& A, double Val)
 {
     A.X /= Val;
     A.Y /= Val;
@@ -151,22 +151,22 @@ FVector3 operator*(const FVector3& A, const FVector3& B)
     return {A.X * B.X, A.Y * B.Y, A.Z * B.Z};
 }
 
-FVector3 operator*(const FVector3& A, float Val)
+FVector3 operator*(const FVector3& A, double Val)
 {
     return {A.X * Val, A.Y * Val, A.Z * Val};
 }
 
-FVector3 operator*(float Val, const FVector3& A)
+FVector3 operator*(double Val, const FVector3& A)
 {
     return A * Val;
 }
 
-FVector3 operator/(const FVector3& A, float Val)
+FVector3 operator/(const FVector3& A, double Val)
 {
     return {A.X / Val, A.Y / Val, A.Z / Val};
 }
 
-FVector3 operator/(float Val, const FVector3& A)
+FVector3 operator/(double Val, const FVector3& A)
 {
     return A / Val;
 }

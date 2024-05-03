@@ -3,17 +3,17 @@
 
 #include <limits>
 
-const float Infinity = std::numeric_limits<float>::infinity();
-const float M_PI = 3.14159265359;
+const double Infinity = std::numeric_limits<double>::infinity();
+const double M_PI = 3.14159265359;
 
-inline float DegreesToRadians(float Degrees)
+inline double DegreesToRadians(double Degrees)
 {
-    return Degrees * M_PI / 180.f;
+    return Degrees * M_PI / 180.0;
 }
 
-inline float RadiansToDegrees(float Radians)
+inline double RadiansToDegrees(double Radians)
 {
-    return Radians * 180.f / M_PI;
+    return Radians * 180.0 / M_PI;
 }
 
 #endif // COMMON_DEFINES_H

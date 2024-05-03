@@ -46,20 +46,20 @@ std::tuple<float, float, float> RNG3D::operator()()
 
 float RandomFloat()
 {
-    static RNG1D RNG1;
+    static thread_local RNG1D RNG1;
     return RNG1();
 }
 
 float RandomFloat(float Min, float Max)
 {
-    static RNG1D RNG1;
+    static thread_local RNG1D RNG1;
     float Value = RNG1();
     return Min + (Max - Min) * Value;
 }
 
 FVector3 RandomVector3()
 {
-    static RNG3D RNG3;
+    static thread_local RNG3D RNG3;
     auto [X, Y, Z] = RNG3();
     return FVector3{X, Y, Z};
 };

@@ -13,7 +13,7 @@ const FVector3& FRay::GetDirection() const
     return Direction;
 }
 
-FPoint3 FRay::At(float T) const
+FPoint3 FRay::At(double T) const
 {
     return (Origin + Direction * T);
 }

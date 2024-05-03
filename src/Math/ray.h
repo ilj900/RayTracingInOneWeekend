@@ -12,7 +12,7 @@ public:
     const FPoint3& GetOrigin() const;
     const FVector3& GetDirection() const;
 
-    FPoint3 At(float T)  const;
+    FPoint3 At(double T)  const;
 
 private:
     FPoint3 Origin;

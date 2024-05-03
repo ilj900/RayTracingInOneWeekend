@@ -1,24 +1,24 @@
 #include "sphere.h"
 
-FSphere::FSphere(const FPoint3& CenterIn, float RadiusIn, std::shared_ptr<FMaterial> MaterialIn) : Center(CenterIn), Radius(RadiusIn), Material(MaterialIn) {};
+FSphere::FSphere(const FPoint3& CenterIn, double RadiusIn, std::shared_ptr<FMaterial> MaterialIn) : Center(CenterIn), Radius(RadiusIn), Material(MaterialIn) {};
 
 bool FSphere::Hit(const FRay &Ray, FInterval Interval, FHitRecord& HitRecordOut) const
 {
     FVector3 RayOriginToSphereCenterVector = Center - Ray.GetOrigin();
 
-    float A = Ray.GetDirection().Length2();
-    float H = Dot(Ray.GetDirection(), RayOriginToSphereCenterVector);
-    float C = RayOriginToSphereCenterVector.Length2() - (Radius * Radius);
-    float D = H * H - A * C;
+    double A = Ray.GetDirection().Length2();
+    double H = Dot(Ray.GetDirection(), RayOriginToSphereCenterVector);
+    double C = RayOriginToSphereCenterVector.Length2() - (Radius * Radius);
+    double D = H * H - A * C;
 
     if (D < 0)
     {
         return false;
     }
 
-    float SqrtD = sqrt(D);
+    double SqrtD = sqrt(D);
 
-    float Root = (H -SqrtD) / A;
+    double Root = (H -SqrtD) / A;
 
     if (!Interval.Surrounds(Root))
     {

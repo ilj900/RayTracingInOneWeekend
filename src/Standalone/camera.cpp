@@ -35,22 +35,22 @@ FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &Worl
     }
 
     FVector3 UnitDirection = Ray.GetDirection().GetNormalized();
-    float A = 0.5f * (UnitDirection.Y + 1.f);
-    return FColor3 (1, 1, 1) * (1.f - A) + FColor3(0.5, 0.7, 1) * A;
+    double A = 0.5 * (UnitDirection.Y + 1);
+    return FColor3 (1, 1, 1) * (1 - A) + FColor3(0.5, 0.7, 1) * A;
 }
 
 void FCamera::Initialize()
 {
     ImageHeight = ImageWidth / AspectRatio;
     ImageHeight = (ImageHeight < 1) ? 1 : ImageHeight;
-    ImageData = std::vector<float>(ImageWidth * ImageHeight * 4);
+    ImageData = std::vector<double>(ImageWidth * ImageHeight * 4);
 
     CameraCenter = LookFrom;
 
-    float Theta = DegreesToRadians(VFOV);
-    float H = tan(Theta * 0.5f);
-    float ViewportHeight = 2.f * H * FocusDistance;
-    float ViewportWidth = ViewportHeight * (float(ImageWidth) / float(ImageHeight));
+    double Theta = DegreesToRadians(VFOV);
+    double H = tan(Theta * 0.5);
+    double ViewportHeight = 2 * H * FocusDistance;
+    double ViewportWidth = ViewportHeight * (double(ImageWidth) / double(ImageHeight));
 
     W = (LookFrom - LookAt).GetNormalized();
     U = Cross(Up, W).GetNormalized();
@@ -58,12 +58,12 @@ void FCamera::Initialize()
 
     FVector3 ViewportU = ViewportWidth * U;
     FVector3 ViewportV = -ViewportHeight * V;
-    PixelDeltaU = ViewportU / float(ImageWidth);
-    PixelDeltaV = ViewportV / float(ImageHeight);
+    PixelDeltaU = ViewportU / double(ImageWidth);
+    PixelDeltaV = ViewportV / double(ImageHeight);
 
     Pixel00 = CameraCenter - (FocusDistance * W) - ViewportU * 0.5 - ViewportV * 0.5;;
 
-    float DefocusRadius = FocusDistance * tan(DegreesToRadians(DefocusAngle * 0.5f));
+    double DefocusRadius = FocusDistance * tan(DegreesToRadians(DefocusAngle * 0.5f));
     DefocusDiscU = U * DefocusRadius;
     DefocusDiscV = V * DefocusRadius;
 }
@@ -137,7 +137,7 @@ void FCamera::Render(const FHittable &World)
     }
 
     std::chrono::time_point<std::chrono::high_resolution_clock> End = std::chrono::steady_clock::now();
-    std::chrono::duration<float> Elapsed = End - Start;
+    std::chrono::duration<double> Elapsed = End - Start;
 
     std::cout << "Rendering finished. Time: " <<  Elapsed.count() << std::endl;
 }
@@ -147,10 +147,10 @@ void FCamera::WriteColor(const FColor3& PixelColor, uint32_t PixelIndex)
     ImageData[PixelIndex * 4] += PixelColor.X;
     ImageData[PixelIndex * 4 + 1] += PixelColor.Y;
     ImageData[PixelIndex * 4 + 2] += PixelColor.Z;
-    ImageData[PixelIndex * 4 + 3] += 1.f;
+    ImageData[PixelIndex * 4 + 3] += 1;
 }
 
-float FCamera::LinearToGamma(float Value) const
+double FCamera::LinearToGamma(double Value) const
 {
     if (Value > 0)
     {
@@ -163,11 +163,11 @@ float FCamera::LinearToGamma(float Value) const
 void FCamera::SaveAsEXR(const std::string &Name)
 {
     std::vector<float> ImageDataEstimated(ImageWidth * ImageHeight * 3);
-    static const FInterval Intensity(0.f, 0.999f);
+    static const FInterval Intensity(0, 0.999f);
 
     for (uint32_t i = 0; i < ImageWidth * ImageHeight; ++i)
     {
-        float InverseAccumulated = 1.f / ImageData[i * 4 + 3];
+        double InverseAccumulated = 1 / ImageData[i * 4 + 3];
         ImageDataEstimated[i * 3] = Intensity.Clamp(LinearToGamma(ImageData[i * 4] * InverseAccumulated));
         ImageDataEstimated[i * 3 + 1] = Intensity.Clamp(LinearToGamma(ImageData[i * 4 + 1] * InverseAccumulated));
         ImageDataEstimated[i * 3 + 2] = Intensity.Clamp(LinearToGamma(ImageData[i * 4 + 2] * InverseAccumulated));
@@ -180,11 +180,11 @@ void FCamera::SaveAsEXR(const std::string &Name)
 void FCamera::SaveAsBMP(const std::string &Name)
 {
     std::vector<unsigned char> EstimatedUnsignedCharImageData(ImageWidth * ImageHeight * 3);
-    static const FInterval Intensity(0.f, 0.999f);
+    static const FInterval Intensity(0, 0.999f);
 
     for (uint32_t i = 0; i < ImageWidth * ImageHeight; ++i)
     {
-        float InverseAccumulated = 1.f / ImageData[i * 4 + 3];
+        double InverseAccumulated = 1 / ImageData[i * 4 + 3];
         EstimatedUnsignedCharImageData[i * 3] = 256 * Intensity.Clamp(LinearToGamma(ImageData[i * 4] * InverseAccumulated));
         EstimatedUnsignedCharImageData[i * 3 + 1] = 256 * Intensity.Clamp(LinearToGamma(ImageData[i * 4 + 1] * InverseAccumulated));
         EstimatedUnsignedCharImageData[i * 3 + 2] = 256 * Intensity.Clamp(LinearToGamma(ImageData[i * 4 + 2] * InverseAccumulated));

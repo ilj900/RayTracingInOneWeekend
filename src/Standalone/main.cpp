@@ -9,7 +9,7 @@ int main()
     FHittableList World;
 
     auto GroundMaterial = std::make_shared<FLambertian>(FColor3(0.5, 0.5, 0.5));
-    World.Add(std::make_shared<FSphere>(FPoint3(0, -1000.f, 0), 1000.f, GroundMaterial));
+    World.Add(std::make_shared<FSphere>(FPoint3(0, -1000, 0), 1000, GroundMaterial));
 
     for (int a = -11; a < 11; a++)
     {
@@ -36,34 +36,34 @@ int main()
                 }
                 else
                 {
-                    SphereMaterial = std::make_shared<FDielectric>(1.5f);
+                    SphereMaterial = std::make_shared<FDielectric>(1.5);
                 }
 
-                World.Add((std::make_shared<FSphere>(Center, 0.2f, SphereMaterial)));
+                World.Add((std::make_shared<FSphere>(Center, 0.2, SphereMaterial)));
             }
         }
     }
 
-    auto Material1 = std::make_shared<FDielectric>(1.5f);
-    World.Add((std::make_shared<FSphere>(FPoint3(0, 1, 0) , 1.f, Material1)));
+    auto Material1 = std::make_shared<FDielectric>(1.5);
+    World.Add((std::make_shared<FSphere>(FPoint3(0, 1, 0) , 1, Material1)));
 
     auto Material2 = std::make_shared<FLambertian>(FColor3(0.4, 0.2, 0.1));
-    World.Add((std::make_shared<FSphere>(FPoint3(-4, 1, 0) , 1.f, Material2)));
+    World.Add((std::make_shared<FSphere>(FPoint3(-4, 1, 0) , 1, Material2)));
 
-    auto Material3 = std::make_shared<FMetal>(FColor3(0.7, 0.6, 0.5), 0.f);
-    World.Add((std::make_shared<FSphere>(FPoint3(4, 1, 0) , 1.f, Material3)));
+    auto Material3 = std::make_shared<FMetal>(FColor3(0.7, 0.6, 0.5), 0);
+    World.Add((std::make_shared<FSphere>(FPoint3(4, 1, 0) , 1, Material3)));
 
     FCamera Camera;
-    Camera.AspectRatio = 16.f / 9.f;
+    Camera.AspectRatio = 16.0 / 9.0;
     Camera.ImageWidth = 1920;
     Camera.IterationsPerPixel = 10;
     Camera.MaxDepth = 10;
-    Camera.VFOV = 20.f;
-    Camera.LookFrom = {13.f, 2.f, 3.f};
-    Camera.LookAt = {0.f, 0.f, 0.f};
-    Camera.Up = {0.f, 1.f, 0.f};
-    Camera.DefocusAngle = 0.6f;
-    Camera.FocusDistance = 10.f;
+    Camera.VFOV = 20;
+    Camera.LookFrom = {13, 2, 3};
+    Camera.LookAt = {0, 0, 0};
+    Camera.Up = {0, 1, 0};
+    Camera.DefocusAngle = 0.6;
+    Camera.FocusDistance = 10;
 
     Camera.Render(World);
 

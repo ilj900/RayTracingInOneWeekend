@@ -27,24 +27,24 @@ private:
 class FMetal : public FMaterial
 {
 public:
-    FMetal(const FColor3& AlbedoIn, float FuzzIn);
+    FMetal(const FColor3& AlbedoIn, double FuzzIn);
     bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const override;
 
 private:
     FColor3 Albedo;
-    float Fuzz;
+    double Fuzz;
 };
 
 class FDielectric : public FMaterial
 {
 public:
-    FDielectric(float RefractionIndexIn);
+    FDielectric(double RefractionIndexIn);
     bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const override;
 
 private:
-    float RefractionIndex;
+    double RefractionIndex;
 
-    static float Reflectance(float Cosine, float RefractionIndex);
+    static double Reflectance(double Cosine, double RefractionIndex);
 };
 
 #endif // MATERIAL_H

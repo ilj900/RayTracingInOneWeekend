@@ -6,24 +6,24 @@ const FInterval FInterval::Universe = {-Infinity, +Infinity};
 
 FInterval::FInterval() : Min(-Infinity), Max(+Infinity) {};
 
-FInterval::FInterval(float MinIn, float MaxIn) : Min(MinIn), Max(MaxIn) {};
+FInterval::FInterval(double MinIn, double MaxIn) : Min(MinIn), Max(MaxIn) {};
 
-float FInterval::Size()
+double FInterval::Size()
 {
     return Max - Min;
 };
 
-bool FInterval::Contains(float X)
+bool FInterval::Contains(double X)
 {
     return (Min <= X) && (X <= Max);
 };
 
-bool FInterval::Surrounds(float X)
+bool FInterval::Surrounds(double X)
 {
     return (Min < X) && (X < Max);
 }
 
-float FInterval::Clamp(float X) const
+double FInterval::Clamp(double X) const
 {
     if (X < Min) return Min;
     if (X > Max) return Max;

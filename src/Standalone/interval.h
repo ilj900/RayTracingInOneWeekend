@@ -4,16 +4,16 @@
 class FInterval
 {
 public:
-    float Min;
-    float Max;
+    double Min;
+    double Max;
 
     FInterval();
-    FInterval(float MinIn, float MaxIn);
+    FInterval(double MinIn, double MaxIn);
 
-    float Size();
-    bool Contains(float X);
-    bool Surrounds(float X);
-    float Clamp(float X) const;
+    double Size();
+    bool Contains(double X);
+    bool Surrounds(double X);
+    double Clamp(double X) const;
 
     static const FInterval Empty;
     static const FInterval Universe;
