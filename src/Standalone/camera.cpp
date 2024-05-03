@@ -42,11 +42,10 @@ void FCamera::Initialize()
     ImageData = std::vector<float>(ImageWidth * ImageHeight * 4);
 
     CameraCenter = LookFrom;
-    
-    float FocalLength = (LookFrom - LookAt).Length();
+
     float Theta = DegreesToRadians(VFOV);
     float H = tan(Theta * 0.5f);
-    float ViewportHeight = 2.f * H * FocalLength;
+    float ViewportHeight = 2.f * H * FocusDistance;
     float ViewportWidth = ViewportHeight * (float(ImageWidth) / float(ImageHeight));
 
     W = (LookFrom - LookAt).GetNormalized();
@@ -58,7 +57,11 @@ void FCamera::Initialize()
     PixelDeltaU = ViewportU / float(ImageWidth);
     PixelDeltaV = ViewportV / float(ImageHeight);
 
-    Pixel00 = CameraCenter - (FocalLength * W) - ViewportU * 0.5 - ViewportV * 0.5;;
+    Pixel00 = CameraCenter - (FocusDistance * W) - ViewportU * 0.5 - ViewportV * 0.5;;
+
+    float DefocusRadius = FocusDistance * tan(DegreesToRadians(DefocusAngle * 0.5f));
+    DefocusDiscU = U * DefocusRadius;
+    DefocusDiscV = V * DefocusRadius;
 }
 
 FRay FCamera::GetRay(uint32_t X, uint32_t Y)
@@ -66,8 +69,16 @@ FRay FCamera::GetRay(uint32_t X, uint32_t Y)
     auto PixelUpperLeft = Pixel00 + (PixelDeltaU * X) + (PixelDeltaV * Y);
     auto [JitterX, JitterY] = RNG2();
     auto JitteredPixel = PixelUpperLeft + (PixelDeltaU * JitterX) + (PixelDeltaV * JitterY);
-    auto RayDirection = JitteredPixel - CameraCenter; /// Not normalized
-    FRay Ray(CameraCenter, RayDirection);
+    auto RayOrigin = CameraCenter;
+
+    if (DefocusAngle > 0)
+    {
+        auto PointOnDisc = RandomInUnitDisc();
+        RayOrigin = CameraCenter + (PointOnDisc.X * DefocusDiscU) + (PointOnDisc.Y * DefocusDiscV);
+    }
+
+    auto RayDirection = JitteredPixel - RayOrigin; /// Not normalized
+    FRay Ray(RayOrigin, RayDirection);
     return Ray;
 }
 
@@ -81,11 +92,6 @@ void FCamera::Render(const FHittable &World)
 
         for(uint32_t j = 0; j < ImageWidth; ++j)
         {
-            if (i == 500 && j == 500)
-            {
-                int dd = 0;
-                dd++;
-            }
             for (uint32_t k = 0; k < IterationsPerPixel; ++k)
             {
                 auto Ray = GetRay(j, i);

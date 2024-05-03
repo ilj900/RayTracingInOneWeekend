@@ -27,10 +27,12 @@ int main()
     Camera.ImageWidth = 1920;
     Camera.IterationsPerPixel = 10;
     Camera.MaxDepth = 10;
-    Camera.VFOV = 90.f;
+    Camera.VFOV = 20.f;
     Camera.LookFrom = {-2.f, 2.f, 1.f};
     Camera.LookAt = {0.f, 0.f, -1.f};
     Camera.Up = {0.f, 1.f, 0.f};
+    Camera.DefocusAngle = 10.f;
+    Camera.FocusDistance = 3.4f;
 
     Camera.Render(World);
 

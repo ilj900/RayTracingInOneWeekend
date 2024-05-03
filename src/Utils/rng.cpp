@@ -50,6 +50,13 @@ float RandomFloat()
     return RNG1();
 }
 
+float RandomFloat(float Min, float Max)
+{
+    static RNG1D RNG1;
+    float Value = RNG1();
+    return Min + (Max - Min) * Value;
+}
+
 FVector3 RandomVector3()
 {
     static RNG3D RNG3;
@@ -94,3 +101,15 @@ FVector3 RandomUnitVectorOnHemisphere(const FVector3& Normal)
         return -OnUnitSphere;
     }
 };
+
+FVector3 RandomInUnitDisc()
+{
+    while (true)
+    {
+        auto Candidate = FVector3(RandomFloat(-1, 1), RandomFloat(-1, 1), 0);
+        if (Candidate.Length2() < 1.f)
+        {
+            return Candidate;
+        }
+    }
+}

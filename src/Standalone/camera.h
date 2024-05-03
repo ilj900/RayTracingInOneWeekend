@@ -22,6 +22,8 @@ public:
     FPoint3 LookFrom = {0, 0, 0};
     FPoint3 LookAt = {0, 0, -1};
     FVector3 Up = {0, 1, 0};
+    float DefocusAngle = 0;
+    float FocusDistance = 10;
 
 private:
     void Initialize();
@@ -38,6 +40,8 @@ private:
     FVector3 U;
     FVector3 V;
     FVector3 W;
+    FVector3 DefocusDiscU;
+    FVector3 DefocusDiscV;
 
     std::vector<float> ImageData;
 
