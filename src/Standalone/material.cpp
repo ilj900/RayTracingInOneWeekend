@@ -13,6 +13,7 @@ FLambertian::FLambertian(const FColor3& AlbedoIn) : Albedo(AlbedoIn) {};
 bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const
 {
     auto ScatterDirection = HitRecord.Normal + RandomUnitVector();
+    ScatterDirection.Normalize();
 
     if (ScatterDirection.NearZero())
     {

@@ -6,6 +6,10 @@
 #include "material.h"
 
 #include <iostream>
+#include <thread>
+#include <functional>
+#include <mutex>
+#include <chrono>
 
 FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &World)
 {
@@ -86,22 +90,56 @@ void FCamera::Render(const FHittable &World)
 {
     Initialize();
 
-    for (uint32_t i = 0; i < ImageHeight; ++i)
-    {
-        std::cout << "Scanline remaining: " << (ImageHeight - i) << std::endl;
+    uint32_t LineCounter = ImageHeight;
+    std::mutex Mutex;
 
-        for(uint32_t j = 0; j < ImageWidth; ++j)
+    auto ScanLines = [&](std::vector<uint32_t> Lines)
+    {
+        for (auto Line : Lines)
         {
-            for (uint32_t k = 0; k < IterationsPerPixel; ++k)
             {
-                auto Ray = GetRay(j, i);
-                FColor3 PixelColor = RayColor(Ray, MaxDepth, World);
-                WriteColor(PixelColor, i * ImageWidth + j);
+                std::lock_guard<std::mutex> Lock(Mutex);
+                std::cout << "Scanline remaining: " << (LineCounter) << std::endl;
+                LineCounter--;
+            }
+
+            for(uint32_t j = 0; j < ImageWidth; ++j)
+            {
+                for (uint32_t k = 0; k < IterationsPerPixel; ++k)
+                {
+                    auto Ray = GetRay(j, Line);
+                    FColor3 PixelColor = RayColor(Ray, MaxDepth, World);
+                    WriteColor(PixelColor, Line * ImageWidth + j);
+                }
             }
         }
+    };
+
+    uint32_t ThreadsCount = std::thread::hardware_concurrency();
+    std::vector<std::vector<uint32_t>> LinesByThread(ThreadsCount);
+
+    for (uint32_t i = 0; i < ImageHeight; ++i)
+    {
+        LinesByThread[i % ThreadsCount].push_back(i);
     }
 
-    std::cout << "Rendering finished." << std::endl;
+    std::vector<std::thread> Threads;
+
+    std::chrono::time_point<std::chrono::high_resolution_clock> Start = std::chrono::steady_clock::now();
+    for (auto Entry : LinesByThread)
+    {
+        Threads.emplace_back(ScanLines, Entry);
+    }
+
+    for (auto& Thread : Threads)
+    {
+        Thread.join();
+    }
+
+    std::chrono::time_point<std::chrono::high_resolution_clock> End = std::chrono::steady_clock::now();
+    std::chrono::duration<float> Elapsed = End - Start;
+
+    std::cout << "Rendering finished. Time: " <<  Elapsed.count() << std::endl;
 }
 
 void FCamera::WriteColor(const FColor3& PixelColor, uint32_t PixelIndex)
