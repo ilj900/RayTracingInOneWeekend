@@ -48,6 +48,8 @@ private:
     std::mt19937 Generator;
 };
 
+float RandomFloat();
+
 FVector3 RandomVector3();
 FVector3 RandomVector3(float Min, float Max);
 FVector3 RandomVectorInUnitSphere();

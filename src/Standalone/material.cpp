@@ -51,7 +51,7 @@ bool FDielectric::Scatter(const FRay &Ray, const FHitRecord &HitRecord, FColor3 
     bool CannotRefract = (RelativeRefractionIndex * SinTheta) > 1.f;
     FVector3 Direction;
 
-    if (CannotRefract)
+    if (CannotRefract || (Reflectance(CosTheta, RelativeRefractionIndex) > RandomFloat()))
     {
         Direction = Reflect(NormalizedRayDirection, HitRecord.Normal);
     }
@@ -64,3 +64,12 @@ bool FDielectric::Scatter(const FRay &Ray, const FHitRecord &HitRecord, FColor3 
 
     return true;
 }
+
+float FDielectric::Reflectance(float Cosine, float RefractionIndex)
+{
+    float R0 = (1 - RefractionIndex) / (1 + RefractionIndex);
+    R0 = R0 * R0;
+    return R0 + (1 - R0) * pow(1 - Cosine, 5);
+}
+
+

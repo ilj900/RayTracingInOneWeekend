@@ -43,6 +43,8 @@ public:
 
 private:
     float RefractionIndex;
+
+    static float Reflectance(float Cosine, float RefractionIndex);
 };
 
 #endif // MATERIAL_H

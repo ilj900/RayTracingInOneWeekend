@@ -44,6 +44,12 @@ std::tuple<float, float, float> RNG3D::operator()()
     return std::make_tuple(DistributionX(Generator), DistributionY(Generator), DistributionZ(Generator));
 };
 
+float RandomFloat()
+{
+    static RNG1D RNG1;
+    return RNG1();
+}
+
 FVector3 RandomVector3()
 {
     static RNG3D RNG3;
