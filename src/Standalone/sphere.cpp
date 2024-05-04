@@ -11,7 +11,7 @@ FSphere::FSphere(const FPoint3& Center1In, const FPoint3& Center2In, double Radi
     auto RadiusVector = FVector3(Radius, Radius, Radius);
     auto BBox1 = FAABB(Center1 - RadiusVector, Center1 + RadiusVector);
     auto BBox2 = FAABB(Center2In - RadiusVector, Center2In + RadiusVector);
-    BBox = FAABB(BBox1, BBox1);
+    BBox = FAABB(BBox1, BBox2);
 
     CenterDirection = Center2In - Center1In;
 };
