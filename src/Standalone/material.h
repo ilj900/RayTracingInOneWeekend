@@ -2,6 +2,8 @@
 
 #include "color3.h"
 
+#include "texture.h"
+
 class FRay;
 class FHitRecord;
 
@@ -17,10 +19,11 @@ class FLambertian : public FMaterial
 {
 public:
     FLambertian(const FColor3& AlbedoIn);
+    FLambertian(std::shared_ptr<FTexture> TextureIn);
     bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const override;
 
 private:
-    FColor3 Albedo;
+    std::shared_ptr<FTexture> Texture;
 };
 
 class FMetal : public FMaterial

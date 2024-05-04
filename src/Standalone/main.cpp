@@ -3,13 +3,14 @@
 #include "hittable_list.h"
 #include "material.h"
 #include "sphere.h"
+#include "texture.h"
 
 int main()
 {
     FHittableList World;
 
-    auto GroundMaterial = std::make_shared<FLambertian>(FColor3(0.5, 0.5, 0.5));
-    World.Add(std::make_shared<FSphere>(FPoint3(0, -1000, 0), 1000, GroundMaterial));
+    auto CheckerboarTexture = std::make_shared<FCheckerTexture>(0.32, FColor3(0.2, 0.3, 0.1), FColor3(0.9, 0.9, 0.9));
+    World.Add(std::make_shared<FSphere>(FPoint3(0, -1000, 0), 1000, std::make_shared<FLambertian>(CheckerboarTexture)));
 
     for (int a = -11; a < 11; a++)
     {

@@ -15,6 +15,8 @@ public:
     FVector3 Normal;
     std::shared_ptr<FMaterial> Material;
     double T;
+    double U;
+    double V;
     bool bFrontFace;
 
     void SetFaceNormal(const FRay& Ray, const FVector3& OutwardNormal);

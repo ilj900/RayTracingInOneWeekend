@@ -8,7 +8,9 @@ bool FMaterial::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& A
     return false;
 }
 
-FLambertian::FLambertian(const FColor3& AlbedoIn) : Albedo(AlbedoIn) {};
+FLambertian::FLambertian(const FColor3& AlbedoIn) : Texture(std::make_shared<FSolidColor>(AlbedoIn)) {};
+
+FLambertian::FLambertian(std::shared_ptr<FTexture> TextureIn) : Texture(TextureIn) {};
 
 bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const
 {
@@ -21,7 +23,7 @@ bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3&
     }
 
     Scattered = FRay(HitRecord.Position, ScatterDirection, Ray.GetTime());
-    Attenuation = Albedo;
+    Attenuation = Texture->Value(HitRecord.U, HitRecord.V, HitRecord.Position);
 
     return true;
 }

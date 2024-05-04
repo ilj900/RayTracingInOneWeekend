@@ -7,7 +7,8 @@ set(INCLUDE
         hittable_list.h
         interval.h
         material.h
-        sphere.h)
+        sphere.h
+        texture.h)
 
 set(SOURCE
         aabb.cpp
@@ -18,7 +19,8 @@ set(SOURCE
         interval.cpp
         main.cpp
         material.cpp
-        sphere.cpp)
+        sphere.cpp
+        texture.cpp)
 
 add_executable(Standalone ${SOURCE} ${INCLUDE})
 
