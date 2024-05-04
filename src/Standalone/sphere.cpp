@@ -69,7 +69,7 @@ std::tuple<double, double> FSphere::GetSphereUV(const FPoint3& Point)
     auto Theta = acos(-Point.Y);
     auto Phi = atan2(-Point.Z, Point.X) + M_PI;
 
-    return std::make_tuple(Phi * M_PI_INV * 2., Theta * M_PI_INV);
+    return std::make_tuple(Phi * M_PI_INV * 0.5, Theta * M_PI_INV);
 }
 
 FPoint3 FSphere::SphereCenter(double Time) const
