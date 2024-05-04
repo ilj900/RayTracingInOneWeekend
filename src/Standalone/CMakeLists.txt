@@ -6,6 +6,7 @@ set(INCLUDE
         hittable.h
         hittable_list.h
         interval.h
+        image_wrapper.h
         material.h
         sphere.h
         texture.h)
@@ -17,6 +18,7 @@ set(SOURCE
         hittable.cpp
         hittable_list.cpp
         interval.cpp
+        image_wrapper.cpp
         main.cpp
         material.cpp
         sphere.cpp

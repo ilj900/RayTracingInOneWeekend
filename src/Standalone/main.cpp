@@ -102,9 +102,32 @@ void CheckeredSpheres()
     Camera.SaveAsEXR("Result.exr");
 }
 
+void Earth()
+{
+    auto EarthTexture = std::make_shared<FImageTexture>("earthmap.jpg");
+    auto EarthSurface = std::make_shared<FLambertian>(EarthTexture);
+    auto Globe = std::make_shared<FSphere>(FPoint3(0, 0, 0), 2, EarthSurface);
+
+    FCamera Camera;
+    Camera.AspectRatio = 16.0 / 9.0;
+    Camera.ImageWidth = 1920;
+    Camera.IterationsPerPixel = 30;
+    Camera.MaxDepth = 10;
+    Camera.VFOV = 20;
+    Camera.LookFrom = {0, 0, 12};
+    Camera.LookAt = {0, 0, 0};
+    Camera.Up = {0, 1, 0};
+    Camera.DefocusAngle = 0.;
+
+    Camera.Render(FHittableList(Globe));
+
+    Camera.SaveAsBMP("Result.bmp");
+    Camera.SaveAsEXR("Result.exr");
+}
+
 int main()
 {
-    switch (2)
+    switch (3)
     {
         case 1:
         {
@@ -115,6 +138,12 @@ int main()
         case 2:
         {
             CheckeredSpheres();
+            break;
+        }
+
+        case 3:
+        {
+            Earth();
             break;
         }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "color3.h"
+#include "image_wrapper.h"
 
 #include <memory>
 
@@ -36,4 +37,15 @@ private:
     double IncScale;
     std::shared_ptr<FTexture> Even;
     std::shared_ptr<FTexture> Odd;
+};
+
+class FImageTexture : public FTexture
+{
+public:
+    FImageTexture(const std::string& Filename);
+
+    FColor3 Value(double U, double  V, const FPoint3& Position) const override;
+
+private:
+    FImageWrapper Image;
 };
