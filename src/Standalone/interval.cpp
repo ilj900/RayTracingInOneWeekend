@@ -14,7 +14,7 @@ FInterval::FInterval(const FInterval& A, const FInterval& B)
     Max = A.Max >= B.Max ? A.Max : B.Max;
 }
 
-double FInterval::Size()
+double FInterval::Size() const
 {
     return Max - Min;
 };

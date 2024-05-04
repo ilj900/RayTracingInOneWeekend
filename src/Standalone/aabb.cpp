@@ -1,5 +1,8 @@
 #include "aabb.h"
 
+const FAABB FAABB::Empty = FAABB(FInterval::Empty, FInterval::Empty, FInterval::Empty);
+const FAABB FAABB::Universe = FAABB(FInterval::Universe, FInterval::Universe, FInterval::Universe);
+
 FAABB::FAABB(const FInterval& XIn, const FInterval& YIn, const FInterval& ZIn) : X(XIn), Y(YIn), Z(ZIn) {};
 
 FAABB::FAABB(const FPoint3& A, const FPoint3& B)
@@ -72,4 +75,16 @@ bool FAABB::Hit(const FRay& Ray, FInterval RayInterval) const
     }
 
     return true;
+}
+
+int FAABB::LongestAxis() const
+{
+    if (X.Size() > Y.Size())
+    {
+        return X.Size() > Z.Size() ? 0 : 2;
+    }
+    else
+    {
+        return Y.Size() > Z.Size() ? 1 : 2;
+    }
 }

@@ -6,7 +6,14 @@ FBVHNode::FBVHNode(FHittableList HittableList) : FBVHNode(HittableList.Hittables
 
 FBVHNode::FBVHNode(std::vector<std::shared_ptr<FHittable>>& Hittables, size_t Start, size_t End)
 {
-    int Axis = RandomInt(0, 2);
+    BBox = FAABB::Empty;
+
+    for (size_t HittableIndex = Start; HittableIndex < End; HittableIndex++)
+    {
+        BBox = FAABB(BBox, Hittables[HittableIndex]->BoundingBox());
+    }
+
+    int Axis = BBox.LongestAxis();
 
     auto Comparator = (Axis == 0) ? BoxXCompare
                     : (Axis == 1) ? BoxYCompare
@@ -31,8 +38,6 @@ FBVHNode::FBVHNode(std::vector<std::shared_ptr<FHittable>>& Hittables, size_t St
         Left = std::make_shared<FBVHNode>(Hittables, Start, Mid);
         Right = std::make_shared<FBVHNode>(Hittables, Mid, End);
     }
-
-    BBox = FAABB(Left->BoundingBox(), Right->BoundingBox());
 }
 
 bool FBVHNode::Hit(const FRay& Ray, FInterval RayInterval, FHitRecord& HitRecord) const

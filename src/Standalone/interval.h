@@ -11,7 +11,7 @@ public:
     FInterval(double MinIn, double MaxIn);
     FInterval(const FInterval& A, const FInterval& B);
 
-    double Size();
+    double Size() const;
     bool Contains(double X);
     bool Surrounds(double X);
     double Clamp(double X) const;

@@ -15,10 +15,14 @@ public:
 
     const FInterval& AxisInterval(uint32_t Axis) const;
     bool Hit(const FRay& Ray, FInterval RayInterval) const;
+    int LongestAxis() const;
 
     FInterval X;
     FInterval Y;
     FInterval Z;
+
+    static const FAABB Empty;
+    static const FAABB Universe;
 };
 
 #endif // AABB_H
