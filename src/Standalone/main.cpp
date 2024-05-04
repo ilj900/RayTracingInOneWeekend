@@ -125,9 +125,34 @@ void Earth()
     Camera.SaveAsEXR("Result.exr");
 }
 
+void PerlinSpheres()
+{
+    FHittableList World;
+
+    auto PerText = std::make_shared<FNoiseTexture>();
+    World.Add(std::make_shared<FSphere>(FPoint3(0, -1000, 0), 1000, std::make_shared<FLambertian>(PerText)));
+    World.Add(std::make_shared<FSphere>(FPoint3(0, 2, 0), 2, std::make_shared<FLambertian>(PerText)));
+
+    FCamera Camera;
+    Camera.AspectRatio = 16.0 / 9.0;
+    Camera.ImageWidth = 1920;
+    Camera.IterationsPerPixel = 30;
+    Camera.MaxDepth = 10;
+    Camera.VFOV = 20;
+    Camera.LookFrom = {13, 2, 3};
+    Camera.LookAt = {0, 0, 0};
+    Camera.Up = {0, 1, 0};
+    Camera.DefocusAngle = 0.;
+
+    Camera.Render(World);
+
+    Camera.SaveAsBMP("Result.bmp");
+    Camera.SaveAsEXR("Result.exr");
+}
+
 int main()
 {
-    switch (3)
+    switch (4)
     {
         case 1:
         {
@@ -144,6 +169,12 @@ int main()
         case 3:
         {
             Earth();
+            break;
+        }
+
+        case 4:
+        {
+            PerlinSpheres();
             break;
         }
 

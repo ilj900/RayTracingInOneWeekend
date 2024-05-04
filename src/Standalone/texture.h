@@ -2,6 +2,7 @@
 
 #include "color3.h"
 #include "image_wrapper.h"
+#include "perlin.h"
 
 #include <memory>
 
@@ -48,4 +49,15 @@ public:
 
 private:
     FImageWrapper Image;
+};
+
+class FNoiseTexture : public FTexture
+{
+public:
+    FNoiseTexture() = default;
+
+    FColor3 Value(double U, double  V, const FPoint3& Position) const override;
+
+private:
+    FPerlin Noise;
 };

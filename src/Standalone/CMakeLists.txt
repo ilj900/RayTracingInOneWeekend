@@ -8,6 +8,7 @@ set(INCLUDE
         interval.h
         image_wrapper.h
         material.h
+        perlin.h
         sphere.h
         texture.h)
 
@@ -21,6 +22,7 @@ set(SOURCE
         image_wrapper.cpp
         main.cpp
         material.cpp
+        perlin.cpp
         sphere.cpp
         texture.cpp)
 
