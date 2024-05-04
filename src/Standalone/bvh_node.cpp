@@ -43,7 +43,7 @@ bool FBVHNode::Hit(const FRay& Ray, FInterval RayInterval, FHitRecord& HitRecord
     }
 
     bool HitLeft = Left->Hit(Ray, RayInterval, HitRecord);
-    bool HitRight = Right->Hit(Ray, RayInterval, HitRecord);
+    bool HitRight = Right->Hit(Ray, FInterval(RayInterval.Min, HitLeft ? HitRecord.T : RayInterval.Max), HitRecord);
 
     return HitLeft || HitRight;
 }

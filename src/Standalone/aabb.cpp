@@ -48,7 +48,7 @@ bool FAABB::Hit(const FRay& Ray, FInterval RayInterval) const
             {
                 RayInterval.Min = T0;
             }
-            if (T1 < RayInterval.Min)
+            if (T1 < RayInterval.Max)
             {
                 RayInterval.Max = T1;
             }
@@ -59,7 +59,7 @@ bool FAABB::Hit(const FRay& Ray, FInterval RayInterval) const
             {
                 RayInterval.Min = T1;
             }
-            if (T0 < RayInterval.Min)
+            if (T0 < RayInterval.Max)
             {
                 RayInterval.Max = T0;
             }
