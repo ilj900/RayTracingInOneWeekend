@@ -11,6 +11,8 @@ public:
     bool Hit(const FRay& Ray, FInterval Interval, FHitRecord& HitRecordOut) const override;
     FAABB BoundingBox() const override;
 
+    static std::tuple<double, double> GetSphereUV(const FPoint3& Point);
+
 private:
     FPoint3 SphereCenter(double Time) const;
     FPoint3 Center1;

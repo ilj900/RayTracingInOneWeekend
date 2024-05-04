@@ -4,6 +4,7 @@
 
 const double Infinity = std::numeric_limits<double>::infinity();
 const double M_PI = 3.14159265359;
+const double M_PI_INV = 1. / M_PI;
 
 inline double DegreesToRadians(double Degrees)
 {

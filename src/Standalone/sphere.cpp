@@ -1,3 +1,5 @@
+#include "common_defines.h"
+
 #include "sphere.h"
 
 FSphere::FSphere(const FPoint3& CenterIn, double RadiusIn, std::shared_ptr<FMaterial> MaterialIn) : Center1(CenterIn), Radius(RadiusIn), Material(MaterialIn), bIsMooving(false)
@@ -49,6 +51,9 @@ bool FSphere::Hit(const FRay &Ray, FInterval Interval, FHitRecord& HitRecordOut)
     HitRecordOut.Position = Ray.At(Root);
     FVector3 OutwardNormal = (HitRecordOut.Position - Center1) / Radius;
     HitRecordOut.SetFaceNormal(Ray, OutwardNormal);
+    auto [U, V] = GetSphereUV(OutwardNormal);
+    HitRecordOut.U = U;
+    HitRecordOut.V = V;
     HitRecordOut.Material = Material;
 
     return true;
@@ -57,6 +62,14 @@ bool FSphere::Hit(const FRay &Ray, FInterval Interval, FHitRecord& HitRecordOut)
 FAABB FSphere::BoundingBox() const
 {
     return BBox;
+}
+
+std::tuple<double, double> FSphere::GetSphereUV(const FPoint3& Point)
+{
+    auto Theta = acos(-Point.Y);
+    auto Phi = atan2(-Point.Z, Point.X) + M_PI;
+
+    return std::make_tuple(Phi * M_PI_INV * 2., Theta * M_PI_INV);
 }
 
 FPoint3 FSphere::SphereCenter(double Time) const
