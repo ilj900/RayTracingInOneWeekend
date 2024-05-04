@@ -2,7 +2,7 @@
 
 #include "vector3.h"
 
-RNG1D::RNG1D() : RNG1D(0.f, 1.f) {};
+RNG1D::RNG1D() : RNG1D(0., 1.) {};
 
 RNG1D::RNG1D(double Min, double Max)
 {
@@ -15,7 +15,7 @@ double RNG1D::operator()()
     return Distribution(Generator);
 };
 
-RNG2D::RNG2D() : RNG2D(0.f, 1.f, 0.f, 1.f) {};
+RNG2D::RNG2D() : RNG2D(0., 1., 0., 1.) {};
 
 RNG2D::RNG2D(double MinX, double MaxX, double MinY, double MaxY)
 {
@@ -29,7 +29,7 @@ std::tuple<double, double> RNG2D::operator()()
     return std::make_tuple(DistributionX(Generator), DistributionY(Generator));
 };
 
-RNG3D::RNG3D() : RNG3D(0.f, 1.f, 0.f, 1.f, 0.f, 1.f) {};
+RNG3D::RNG3D() : RNG3D(0., 1., 0., 1., 0., 1.) {};
 
 RNG3D::RNG3D(double MinX, double MaxX, double MinY, double MaxY, double MinZ, double MaxZ)
 {
@@ -97,7 +97,7 @@ FVector3 RandomUnitVectorOnHemisphere(const FVector3& Normal)
 {
     auto OnUnitSphere = RandomUnitVector();
 
-    if (Dot(OnUnitSphere, Normal) > 0.f)
+    if (Dot(OnUnitSphere, Normal) > 0.)
     {
         return OnUnitSphere;
     }
@@ -112,7 +112,7 @@ FVector3 RandomInUnitDisc()
     while (true)
     {
         auto Candidate = FVector3(RandomDouble(-1., 1.), RandomDouble(-1., 1.), 0);
-        if (Candidate.Length2() < 1.f)
+        if (Candidate.Length2() < 1.)
         {
             return Candidate;
         }
