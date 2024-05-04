@@ -1,5 +1,4 @@
-#ifndef RNG_H
-#define RNG_H
+#pragma once
 
 #include <tuple>
 #include <random>
@@ -58,5 +57,3 @@ FVector3 RandomVectorInUnitSphere();
 FVector3 RandomUnitVector();
 FVector3 RandomUnitVectorOnHemisphere(const FVector3& Normal);
 FVector3 RandomInUnitDisc();
-
-#endif // RNG_H

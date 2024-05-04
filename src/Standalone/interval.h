@@ -1,5 +1,4 @@
-#ifndef INTERVAL_H
-#define INTERVAL_H
+#pragma once
 
 class FInterval
 {
@@ -20,5 +19,3 @@ public:
     static const FInterval Empty;
     static const FInterval Universe;
 };
-
-#endif // INTERVAL_H

@@ -60,7 +60,7 @@ int main()
     FCamera Camera;
     Camera.AspectRatio = 16.0 / 9.0;
     Camera.ImageWidth = 1920;
-    Camera.IterationsPerPixel = 10;
+    Camera.IterationsPerPixel = 30;
     Camera.MaxDepth = 10;
     Camera.VFOV = 20;
     Camera.LookFrom = {13, 2, 3};

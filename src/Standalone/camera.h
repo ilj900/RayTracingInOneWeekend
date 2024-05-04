@@ -1,5 +1,4 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#pragma once
 
 #include "color3.h"
 #include "hittable.h"
@@ -48,5 +47,3 @@ private:
     RNG2D RNG2;
     RNG3D RNG3;
 };
-
-#endif // CAMERA_H

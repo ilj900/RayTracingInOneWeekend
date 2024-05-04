@@ -1,5 +1,4 @@
-#ifndef BVH_H
-#define BVH_H
+#pragma once
 
 #include "hittable_list.h"
 
@@ -23,5 +22,3 @@ private:
     std::shared_ptr<FHittable> Right;
     FAABB BBox;
 };
-
-#endif // BVH_H

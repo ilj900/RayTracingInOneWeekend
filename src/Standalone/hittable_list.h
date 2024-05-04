@@ -1,5 +1,4 @@
-#ifndef HITTABLE_LIST_H
-#define HITTABLE_LIST_H
+#pragma once
 
 #include "aabb.h"
 #include "hittable.h"
@@ -25,5 +24,3 @@ public:
 private:
     FAABB BBox;
 };
-
-#endif // HITTABLE_LIST_H

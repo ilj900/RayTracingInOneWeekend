@@ -1,5 +1,4 @@
-#ifndef AABB_H
-#define AABB_H
+#pragma once
 
 #include "interval.h"
 #include "ray.h"
@@ -24,5 +23,3 @@ public:
     static const FAABB Empty;
     static const FAABB Universe;
 };
-
-#endif // AABB_H

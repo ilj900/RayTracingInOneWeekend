@@ -1,5 +1,4 @@
-#ifndef VECTOR3_H
-#define VECTOR3_H
+#pragma once
 
 #include <string>
 
@@ -46,5 +45,3 @@ FVector3 operator/(const FVector3& A, double Val);
 FVector3 operator/(double Val, const FVector3& A);
 
 using FPoint3 = FVector3;
-
-#endif // VECTOR3_H

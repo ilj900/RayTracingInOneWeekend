@@ -1,5 +1,4 @@
-#ifndef RAY_H
-#define RAY_H
+#pragma once
 
 #include "vector3.h"
 
@@ -20,6 +19,3 @@ private:
     FVector3 Direction;
     double Time;
 };
-
-
-#endif // RAY_H

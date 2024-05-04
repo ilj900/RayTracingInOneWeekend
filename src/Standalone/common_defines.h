@@ -1,5 +1,4 @@
-#ifndef COMMON_DEFINES_H
-#define COMMON_DEFINES_H
+#pragma once
 
 #include <limits>
 
@@ -15,5 +14,3 @@ inline double RadiansToDegrees(double Radians)
 {
     return Radians * 180.0 / M_PI;
 }
-
-#endif // COMMON_DEFINES_H

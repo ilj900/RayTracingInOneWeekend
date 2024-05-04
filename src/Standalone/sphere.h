@@ -1,5 +1,4 @@
-#ifndef SPHERE_H
-#define SPHERE_H
+#pragma once
 
 #include "hittable.h"
 
@@ -21,5 +20,3 @@ private:
     FVector3 CenterDirection;
     FAABB BBox;
 };
-
-#endif // SPHERE_H

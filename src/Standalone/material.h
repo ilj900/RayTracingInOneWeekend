@@ -1,5 +1,4 @@
-#ifndef MATERIAL_H
-#define MATERIAL_H
+#pragma once
 
 #include "color3.h"
 
@@ -46,5 +45,3 @@ private:
 
     static double Reflectance(double Cosine, double RefractionIndex);
 };
-
-#endif // MATERIAL_H
