@@ -5,7 +5,7 @@
 #include "sphere.h"
 #include "texture.h"
 
-int main()
+void BouncingSpheres()
 {
     FHittableList World;
 
@@ -74,6 +74,51 @@ int main()
 
     Camera.SaveAsBMP("Result.bmp");
     Camera.SaveAsEXR("Result.exr");
+}
+
+void CheckeredSpheres()
+{
+    FHittableList World;
+
+    auto Checker = std::make_shared<FCheckerTexture>(0.32, FColor3(0.2, 0.3, 0.1), FColor3(0.9, 0.9, 0.9));
+
+    World.Add(std::make_shared<FSphere>(FPoint3(0, -10, 0), 10, std::make_shared<FLambertian>(Checker)));
+    World.Add(std::make_shared<FSphere>(FPoint3(0, 10, 0), 10, std::make_shared<FLambertian>(Checker)));
+
+    FCamera Camera;
+    Camera.AspectRatio = 16.0 / 9.0;
+    Camera.ImageWidth = 1920;
+    Camera.IterationsPerPixel = 30;
+    Camera.MaxDepth = 10;
+    Camera.VFOV = 20;
+    Camera.LookFrom = {13, 2, 3};
+    Camera.LookAt = {0, 0, 0};
+    Camera.Up = {0, 1, 0};
+    Camera.DefocusAngle = 0.;
+
+    Camera.Render(World);
+
+    Camera.SaveAsBMP("Result.bmp");
+    Camera.SaveAsEXR("Result.exr");
+}
+
+int main()
+{
+    switch (2)
+    {
+        case 1:
+        {
+            BouncingSpheres();
+            break;
+        }
+
+        case 2:
+        {
+            CheckeredSpheres();
+            break;
+        }
+
+    }
 
     return 0;
 }
