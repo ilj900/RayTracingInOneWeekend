@@ -2,6 +2,7 @@
 #include "camera.h"
 #include "hittable_list.h"
 #include "material.h"
+#include "quad.h"
 #include "sphere.h"
 #include "texture.h"
 
@@ -150,9 +151,42 @@ void PerlinSpheres()
     Camera.SaveAsEXR("Result.exr");
 }
 
+void Quads()
+{
+    FHittableList World;
+
+    auto LeftRed = std::make_shared<FLambertian>(FColor3(1., 0.2, 0.2));
+    auto BackGreen = std::make_shared<FLambertian>(FColor3(0.2, 1., 0.2));
+    auto RightBlue = std::make_shared<FLambertian>(FColor3(0.2, 0.2, 1.));
+    auto UpperOrange = std::make_shared<FLambertian>(FColor3(1., 0.5, 0.0));
+    auto LowerTeal = std::make_shared<FLambertian>(FColor3(0.2, 0.8, 0.8));
+
+    World.Add(std::make_shared<FQuad>(FPoint3(-3, -2, 5), FVector3(0, 0, -4), FVector3(0, 4,  0), LeftRed));
+    World.Add(std::make_shared<FQuad>(FPoint3(-2, -2, 0), FVector3(4, 0,  0), FVector3(0, 4,  0), BackGreen));
+    World.Add(std::make_shared<FQuad>(FPoint3( 3, -2, 1), FVector3(0, 0,  4), FVector3(0, 4,  0), RightBlue));
+    World.Add(std::make_shared<FQuad>(FPoint3(-2,  3, 1), FVector3(4, 0,  0), FVector3(0, 0,  4), UpperOrange));
+    World.Add(std::make_shared<FQuad>(FPoint3(-2, -3, 5), FVector3(4, 0,  0), FVector3(0, 0, -4), LowerTeal));
+
+    FCamera Camera;
+    Camera.AspectRatio = 16.0 / 9.0;
+    Camera.ImageWidth = 1920;
+    Camera.IterationsPerPixel = 30;
+    Camera.MaxDepth = 10;
+    Camera.VFOV = 80;
+    Camera.LookFrom = {0, 0, 9};
+    Camera.LookAt = {0, 0, 0};
+    Camera.Up = {0, 1, 0};
+    Camera.DefocusAngle = 0.;
+
+    Camera.Render(World);
+
+    Camera.SaveAsBMP("Result.bmp");
+    Camera.SaveAsEXR("Result.exr");
+}
+
 int main()
 {
-    switch (4)
+    switch (5)
     {
         case 1:
         {
@@ -175,6 +209,12 @@ int main()
         case 4:
         {
             PerlinSpheres();
+            break;
+        }
+
+        case 5:
+        {
+            Quads();
             break;
         }
 

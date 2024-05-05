@@ -9,6 +9,7 @@ set(INCLUDE
         image_wrapper.h
         material.h
         perlin.h
+        quad.h
         sphere.h
         texture.h)
 
@@ -23,6 +24,7 @@ set(SOURCE
         main.cpp
         material.cpp
         perlin.cpp
+        quad.cpp
         sphere.cpp
         texture.cpp)
 

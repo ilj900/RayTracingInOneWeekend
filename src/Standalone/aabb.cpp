@@ -3,13 +3,18 @@
 const FAABB FAABB::Empty = FAABB(FInterval::Empty, FInterval::Empty, FInterval::Empty);
 const FAABB FAABB::Universe = FAABB(FInterval::Universe, FInterval::Universe, FInterval::Universe);
 
-FAABB::FAABB(const FInterval& XIn, const FInterval& YIn, const FInterval& ZIn) : X(XIn), Y(YIn), Z(ZIn) {};
+FAABB::FAABB(const FInterval& XIn, const FInterval& YIn, const FInterval& ZIn) : X(XIn), Y(YIn), Z(ZIn)
+{
+    PadToMinimums();
+};
 
 FAABB::FAABB(const FPoint3& A, const FPoint3& B)
 {
     X = (A.X <= B.X) ? FInterval(A.X, B.X) : FInterval(B.X, A.X);
     Y = (A.Y <= B.Y) ? FInterval(A.Y, B.Y) : FInterval(B.Y, A.Y);
     Z = (A.Z <= B.Z) ? FInterval(A.Z, B.Z) : FInterval(B.Z, A.Z);
+
+    PadToMinimums();
 }
 
 FAABB::FAABB(const FAABB& A, const FAABB& B)
@@ -87,4 +92,13 @@ int FAABB::LongestAxis() const
     {
         return Y.Size() > Z.Size() ? 1 : 2;
     }
+}
+
+void FAABB::PadToMinimums()
+{
+    const double Delta = 0.0001;
+
+    X = X.Size() < Delta ? X.Expand(Delta) : X;
+    Y = Y.Size() < Delta ? Y.Expand(Delta) : Y;
+    Z = Z.Size() < Delta ? Z.Expand(Delta) : Z;
 }
