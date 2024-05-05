@@ -29,6 +29,9 @@ double FPerlin::Noise(const FVector3& Point) const
     auto U = Point.X - std::floor(Point.X);
     auto V = Point.Y - std::floor(Point.Y);
     auto W = Point.Z - std::floor(Point.Z);
+    U = U * U * (3 - 2 * U);
+    V = V * V * (3 - 2 * V);
+    W = W * W * (3 - 2 * W);
 
     auto i = int(std::floor(Point.X));
     auto j = int(std::floor(Point.Y));
