@@ -18,4 +18,7 @@ public:
 
     static const FInterval Empty;
     static const FInterval Universe;
+
+    friend FInterval operator+(const FInterval& Interval, double Value);
+    friend FInterval operator+(double Value, const FInterval& Interval);
 };

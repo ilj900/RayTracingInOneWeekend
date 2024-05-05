@@ -236,8 +236,15 @@ void CornellBox()
     World.Add(std::make_shared<FQuad>(FPoint3(555, 555, 555), FVector3(-555, 0, 0), FVector3(0, 0, -555), White));
     World.Add(std::make_shared<FQuad>(FPoint3(  0,   0, 555), FVector3(555, 0, 0), FVector3(0, 555, 0), White));
 
-    World.Add(Box(FPoint3(130, 0, 65), FPoint3(295, 165, 230), White));
-    World.Add(Box(FPoint3(265, 0, 295), FPoint3(430, 330, 460), White));
+    std::shared_ptr<FHittable> Box1 = Box(FPoint3(0, 0, 0), FPoint3(165, 330, 165), White);
+    Box1 = std::make_shared<FRotateY>(Box1, 15);
+    Box1 = std::make_shared<FTranslate>(Box1, FVector3(265, 0, 295));
+    World.Add(Box1);
+
+    std::shared_ptr<FHittable> Box2 = Box(FPoint3(0, 0, 0), FPoint3(165, 165, 165), White);
+    Box2 = std::make_shared<FRotateY>(Box2, -18);
+    Box2 = std::make_shared<FTranslate>(Box2, FVector3(130, 0, 65));
+    World.Add(Box2);
 
     FCamera Camera;
     Camera.AspectRatio = 1;

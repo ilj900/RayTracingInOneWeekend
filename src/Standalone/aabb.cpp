@@ -94,6 +94,16 @@ int FAABB::LongestAxis() const
     }
 }
 
+FAABB operator+(const FAABB& BBox, const FVector3& Offset)
+{
+    return FAABB(BBox.X + Offset.X, BBox.Y + Offset.Y, BBox.Z + Offset.Z);
+}
+
+FAABB operator+(const FVector3& Offset, const FAABB& BBox)
+{
+    return BBox + Offset;
+}
+
 void FAABB::PadToMinimums()
 {
     const double Delta = 0.0001;

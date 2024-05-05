@@ -41,3 +41,13 @@ FInterval FInterval::Expand(double Delta)
     auto Padding = Delta * 0.5;
     return {Min - Padding, Max + Padding};
 }
+
+FInterval operator+(const FInterval& Interval, double Value)
+{
+    return FInterval(Interval.Min + Value, Interval.Max + Value);
+}
+
+FInterval operator+(double Value, const FInterval& Interval)
+{
+    return Interval + Value;
+}

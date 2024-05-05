@@ -23,6 +23,9 @@ public:
     static const FAABB Empty;
     static const FAABB Universe;
 
+    friend FAABB operator+(const FAABB& BBox, const FVector3& Offset);
+    friend FAABB operator+(const FVector3& Offset, const FAABB& BBox);
+
 private:
     void PadToMinimums();
 };
