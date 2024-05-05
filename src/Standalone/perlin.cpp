@@ -26,11 +26,28 @@ FPerlin::~FPerlin()
 
 double FPerlin::Noise(const FVector3& Point) const
 {
-    auto i = int(4 * Point.X) & 255;
-    auto j = int(4 * Point.Y) & 255;
-    auto k = int(4 * Point.Z) & 255;
+    auto U = Point.X - std::floor(Point.X);
+    auto V = Point.Y - std::floor(Point.Y);
+    auto W = Point.Z - std::floor(Point.Z);
 
-    return RandFloat[PermX[i] ^ PermY[j] ^ PermZ[k]];
+    auto i = int(std::floor(Point.X));
+    auto j = int(std::floor(Point.Y));
+    auto k = int(std::floor(Point.Z));
+
+    double C[2][2][2];
+
+    for (int di = 0; di < 2; di++)
+    {
+        for (int dj = 0; dj < 2; dj++)
+        {
+            for (int dk = 0; dk < 2; dk++)
+            {
+                C[di][dj][dk] = RandFloat[PermX[(i + di) & 255] ^ PermY[(j + dj) & 255] ^ PermZ[(k + dk) & 255]];
+            }
+        }
+    }
+
+    return TrilinearInterp(C, U, V, W);
 }
 
 int* FPerlin::PerlinGeneratePerm()
@@ -56,4 +73,25 @@ void FPerlin::Permute(int* P, int N)
         P[i] = P[Target];
         P[Target] = Tmp;
     }
+}
+
+double FPerlin::TrilinearInterp(double C[2][2][2], double U, double V, double W)
+{
+    double Accum = 0.;
+
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < 2; j++)
+        {
+            for (int k = 0; k < 2; k++)
+            {
+                Accum += (i * U + (1 - i) * (1 - U))
+                       * (j * V + (1 - j) * (1 - V))
+                       * (k * W + (1 - k) * (1 - W))
+                       * C[i][j][k];
+            }
+        }
+    }
+
+    return Accum;
 }
