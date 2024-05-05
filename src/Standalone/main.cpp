@@ -195,7 +195,7 @@ void SimpleLight()
 
     auto PerlinTexture = std::make_shared<FNoiseTexture>(4);
 
-    World.Add(std::make_shared<FSphere>(FPoint3(0, -100, 0), 1000, std::make_shared<FLambertian>(PerlinTexture)));
+    World.Add(std::make_shared<FSphere>(FPoint3(0, -1000, 0), 1000, std::make_shared<FLambertian>(PerlinTexture)));
     World.Add(std::make_shared<FSphere>(FPoint3(0, 2, 0), 2, std::make_shared<FLambertian>(PerlinTexture)));
 
     auto DiffuseLight = std::make_shared<FDiffuseLight>(FColor3(4, 4, 4));
