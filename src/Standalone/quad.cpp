@@ -72,3 +72,24 @@ bool FQuad::IsInterior(double A, double B, FHitRecord& HitRecord) const
 
     return true;
 }
+
+std::shared_ptr<FHittableList> Box(const FPoint3& A, const FPoint3& B, std::shared_ptr<FMaterial> Material)
+{
+    auto Sides = std::make_shared<FHittableList>();
+
+    auto Min = FPoint3(fmin(A.X, B.X), fmin(A.Y, B.Y), fmin(A.Z, B.Z));
+    auto Max = FPoint3(fmax(A.X, B.X), fmax(A.Y, B.Y), fmax(A.Z, B.Z));
+
+    auto DX = FVector3(Max.X - Min.X, 0, 0);
+    auto DY = FVector3(0, Max.Y - Min.Y, 0);
+    auto DZ = FVector3(0, 0, Max.Z - Min.Z);
+
+    Sides->Add(std::make_shared<FQuad>(FPoint3(Min.X, Min.Y, Max.Z),  DX,  DY, Material));
+    Sides->Add(std::make_shared<FQuad>(FPoint3(Max.X, Min.Y, Max.Z), -DZ,  DY, Material));
+    Sides->Add(std::make_shared<FQuad>(FPoint3(Max.X, Min.Y, Min.Z), -DX,  DY, Material));
+    Sides->Add(std::make_shared<FQuad>(FPoint3(Min.X, Min.Y, Min.Z),  DZ,  DY, Material));
+    Sides->Add(std::make_shared<FQuad>(FPoint3(Min.X, Max.Y, Max.Z),  DX, -DZ, Material));
+    Sides->Add(std::make_shared<FQuad>(FPoint3(Min.X, Min.Y, Min.Z),  DX,  DZ, Material));
+
+    return Sides;
+}

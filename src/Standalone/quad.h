@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hittable.h"
+#include "hittable_list.h"
 
 class FQuad : public FHittable
 {
@@ -25,3 +26,5 @@ private:
     double D;
     FVector3 W;
 };
+
+std::shared_ptr<FHittableList> Box(const FPoint3& A, const FPoint3& B, std::shared_ptr<FMaterial> Material);

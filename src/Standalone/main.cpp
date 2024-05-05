@@ -236,10 +236,13 @@ void CornellBox()
     World.Add(std::make_shared<FQuad>(FPoint3(555, 555, 555), FVector3(-555, 0, 0), FVector3(0, 0, -555), White));
     World.Add(std::make_shared<FQuad>(FPoint3(  0,   0, 555), FVector3(555, 0, 0), FVector3(0, 555, 0), White));
 
+    World.Add(Box(FPoint3(130, 0, 65), FPoint3(295, 165, 230), White));
+    World.Add(Box(FPoint3(265, 0, 295), FPoint3(430, 330, 460), White));
+
     FCamera Camera;
     Camera.AspectRatio = 1;
-    Camera.ImageWidth = 600;
-    Camera.IterationsPerPixel = 200;
+    Camera.ImageWidth = 1080;
+    Camera.IterationsPerPixel = 20;
     Camera.MaxDepth = 10;
     Camera.Background = {0., 0., 0.};
     Camera.VFOV = 40;
