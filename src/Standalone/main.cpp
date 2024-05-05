@@ -199,6 +199,7 @@ void SimpleLight()
     World.Add(std::make_shared<FSphere>(FPoint3(0, 2, 0), 2, std::make_shared<FLambertian>(PerlinTexture)));
 
     auto DiffuseLight = std::make_shared<FDiffuseLight>(FColor3(4, 4, 4));
+    World.Add(std::make_shared<FSphere>(FPoint3(0, 7, 0), 2, DiffuseLight));
     World.Add(std::make_shared<FQuad>(FPoint3(3, 1, -2), FVector3(2, 0 ,0), FVector3(0, 2, 0), DiffuseLight));
 
     FCamera Camera;
