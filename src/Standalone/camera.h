@@ -23,6 +23,7 @@ public:
     FVector3 Up = {0, 1, 0};
     double DefocusAngle = 0;
     double FocusDistance = 10;
+    FColor3 Background;
 
 private:
     void Initialize();

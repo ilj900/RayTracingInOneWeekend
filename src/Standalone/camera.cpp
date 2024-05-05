@@ -20,23 +20,23 @@ FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &Worl
 
     FHitRecord HitRecord;
 
-    if (World.Hit(Ray, {0.0001f, INFINITY}, HitRecord))
+    if (!World.Hit(Ray, FInterval(0.0001, Infinity), HitRecord))
     {
-        FRay Scattered;
-        FColor3 Attenuation;
-
-        if (HitRecord.Material->Scatter(Ray, HitRecord, Attenuation, Scattered))
-        {
-            FColor3 Color = RayColor(Scattered, Depth - 1, World);
-            return Attenuation * Color;
-        }
-
-        return {0, 0, 0};
+        return Background;
     }
 
-    FVector3 UnitDirection = Ray.GetDirection().GetNormalized();
-    double A = 0.5 * (UnitDirection.Y + 1);
-    return FColor3 (1, 1, 1) * (1 - A) + FColor3(0.5, 0.7, 1) * A;
+    FRay Scattered;
+    FColor3 Attenuation;
+    FColor3 ColorFromEmission = HitRecord.Material->Emit(HitRecord.U, HitRecord.V, HitRecord.Position);
+
+    if (!HitRecord.Material->Scatter(Ray, HitRecord, Attenuation, Scattered))
+    {
+        return ColorFromEmission;
+    }
+
+    FColor3 ColorFromScatter = Attenuation * RayColor(Scattered, Depth - 1, World);
+
+    return ColorFromEmission + ColorFromScatter;
 }
 
 void FCamera::Initialize()

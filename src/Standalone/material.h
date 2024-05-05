@@ -12,6 +12,7 @@ class FMaterial
 public:
     virtual ~FMaterial() = default;
 
+    virtual FColor3 Emit(double U, double V, const FPoint3& Point) const;
     virtual bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const;
 };
 
@@ -47,4 +48,16 @@ private:
     double RefractionIndex;
 
     static double Reflectance(double Cosine, double RefractionIndex);
+};
+
+class FDiffuseLight : public FMaterial
+{
+public:
+    FDiffuseLight(const FColor3& EmissionColor);
+    FDiffuseLight(std::shared_ptr<FTexture> TextureIn);
+
+    FColor3 Emit(double U, double V, const FPoint3& Point) const override;
+
+private:
+    std::shared_ptr<FTexture> Texture;
 };

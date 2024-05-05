@@ -70,6 +70,7 @@ void BouncingSpheres()
     Camera.Up = {0, 1, 0};
     Camera.DefocusAngle = 0.6;
     Camera.FocusDistance = 10;
+    Camera.Background = {.7, 0.8, 1.};
 
     Camera.Render(World);
 
@@ -96,6 +97,7 @@ void CheckeredSpheres()
     Camera.LookAt = {0, 0, 0};
     Camera.Up = {0, 1, 0};
     Camera.DefocusAngle = 0.;
+    Camera.Background = {.7, 0.8, 1.};
 
     Camera.Render(World);
 
@@ -119,6 +121,7 @@ void Earth()
     Camera.LookAt = {0, 0, 0};
     Camera.Up = {0, 1, 0};
     Camera.DefocusAngle = 0.;
+    Camera.Background = {.7, 0.8, 1.};
 
     Camera.Render(FHittableList(Globe));
 
@@ -144,6 +147,7 @@ void PerlinSpheres()
     Camera.LookAt = {0, 0, 0};
     Camera.Up = {0, 1, 0};
     Camera.DefocusAngle = 0.;
+    Camera.Background = {.7, 0.8, 1.};
 
     Camera.Render(World);
 
@@ -177,6 +181,37 @@ void Quads()
     Camera.LookAt = {0, 0, 0};
     Camera.Up = {0, 1, 0};
     Camera.DefocusAngle = 0.;
+    Camera.Background = {.7, 0.8, 1.};
+
+    Camera.Render(World);
+
+    Camera.SaveAsBMP("Result.bmp");
+    Camera.SaveAsEXR("Result.exr");
+}
+
+void SimpleLight()
+{
+    FHittableList World;
+
+    auto PerlinTexture = std::make_shared<FNoiseTexture>(4);
+
+    World.Add(std::make_shared<FSphere>(FPoint3(0, -100, 0), 1000, std::make_shared<FLambertian>(PerlinTexture)));
+    World.Add(std::make_shared<FSphere>(FPoint3(0, 2, 0), 2, std::make_shared<FLambertian>(PerlinTexture)));
+
+    auto DiffuseLight = std::make_shared<FDiffuseLight>(FColor3(4, 4, 4));
+    World.Add(std::make_shared<FQuad>(FPoint3(3, 1, -2), FVector3(2, 0 ,0), FVector3(0, 2, 0), DiffuseLight));
+
+    FCamera Camera;
+    Camera.AspectRatio = 16.0 / 9.0;
+    Camera.ImageWidth = 1920;
+    Camera.IterationsPerPixel = 30;
+    Camera.MaxDepth = 10;
+    Camera.VFOV = 20;
+    Camera.LookFrom = {26, 3, 6};
+    Camera.LookAt = {0, 2, 0};
+    Camera.Up = {0, 1, 0};
+    Camera.DefocusAngle = 0.;
+    Camera.Background = {0., 0., 0.};
 
     Camera.Render(World);
 
@@ -186,7 +221,7 @@ void Quads()
 
 int main()
 {
-    switch (5)
+    switch (6)
     {
         case 1:
         {
@@ -215,6 +250,12 @@ int main()
         case 5:
         {
             Quads();
+            break;
+        }
+
+        case 6:
+        {
+            SimpleLight();
             break;
         }
 

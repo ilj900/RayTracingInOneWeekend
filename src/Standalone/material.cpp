@@ -3,10 +3,15 @@
 
 #include "material.h"
 
+FColor3 FMaterial::Emit(double U, double V, const FPoint3& Point) const
+{
+    return FColor3(0, 0, 0);
+}
+
 bool FMaterial::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const
 {
     return false;
-}
+};
 
 FLambertian::FLambertian(const FColor3& AlbedoIn) : Texture(std::make_shared<FSolidColor>(AlbedoIn)) {};
 
@@ -26,7 +31,7 @@ bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3&
     Attenuation = Texture->Value(HitRecord.U, HitRecord.V, HitRecord.Position);
 
     return true;
-}
+};
 
 FMetal::FMetal(const FColor3& AlbedoIn, double FuzzIn) : Albedo(AlbedoIn), Fuzz(FuzzIn) {};
 
@@ -38,7 +43,7 @@ bool FMetal::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Atte
     Attenuation = Albedo;
 
     return Dot(Scattered.GetDirection(), HitRecord.Normal) > 0;
-}
+};
 
 FDielectric::FDielectric(double RefractionIndexIn) : RefractionIndex(RefractionIndexIn) {};
 
@@ -66,13 +71,22 @@ bool FDielectric::Scatter(const FRay &Ray, const FHitRecord &HitRecord, FColor3 
     Scattered = {HitRecord.Position, Direction, Ray.GetTime()};
 
     return true;
-}
+};
 
 double FDielectric::Reflectance(double Cosine, double RefractionIndex)
 {
     double R0 = (1 - RefractionIndex) / (1 + RefractionIndex);
     R0 = R0 * R0;
     return R0 + (1 - R0) * pow(1 - Cosine, 5);
+};
+
+FDiffuseLight::FDiffuseLight(std::shared_ptr<FTexture> TextureIn) : Texture(TextureIn) {};
+
+FDiffuseLight::FDiffuseLight(const FColor3& EmissionColor) : Texture(std::make_shared<FSolidColor>(EmissionColor)) {};
+
+FColor3 FDiffuseLight::Emit(double U, double V, const FPoint3& Point) const
+{
+    return Texture->Value(U, V, Point);
 }
 
 
