@@ -52,5 +52,5 @@ FNoiseTexture::FNoiseTexture(double ScaleIn) : Scale(ScaleIn) {};
 
 FColor3 FNoiseTexture::Value(double U, double  V, const FPoint3& Position) const
 {
-    return FColor3(1, 1, 1) * 0.5 * (1. + Noise.Noise(Scale * Position));
+    return FColor3(1, 1, 1) * Noise.Turb(Position, 7);
 }

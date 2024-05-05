@@ -50,6 +50,22 @@ double FPerlin::Noise(const FVector3& Point) const
     return TrilinearInterp(C, U, V, W);
 }
 
+double FPerlin::Turb(const FPoint3& Point, int Depth) const
+{
+    double Accum = 0.;
+    FPoint3 TempP = Point;
+    double Weight = 1.;
+
+    for (int i = 0; i < Depth; ++i)
+    {
+        Accum += Weight * Noise(TempP);
+        Weight *= 0.5;
+        TempP *= 2.;
+    }
+
+    return fabs(Accum);
+}
+
 int* FPerlin::PerlinGeneratePerm()
 {
     auto P = new int[PointCount];

@@ -8,6 +8,7 @@ public:
     FPerlin();
     ~FPerlin();
     double Noise(const FVector3& Point) const;
+    double Turb(const FPoint3& Point, int Depth) const;
 
 private:
     static const int PointCount = 256;
