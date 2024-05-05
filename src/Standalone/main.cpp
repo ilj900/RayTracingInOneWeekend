@@ -220,9 +220,43 @@ void SimpleLight()
     Camera.SaveAsEXR("Result.exr");
 }
 
+void CornellBox()
+{
+    FHittableList World;
+
+    auto Red = std::make_shared<FLambertian>(FColor3(0.65, 0.05, 0.05));
+    auto White = std::make_shared<FLambertian>(FColor3(0.73, 0.73, 0.73));
+    auto Green = std::make_shared<FLambertian>(FColor3(0.12, 0.45, 0.15));
+    auto Light = std::make_shared<FDiffuseLight>(FColor3(15, 15, 15));
+
+    World.Add(std::make_shared<FQuad>(FPoint3(555,   0,   0), FVector3(   0, 555, 0), FVector3(0, 0, 555), Green));
+    World.Add(std::make_shared<FQuad>(FPoint3(  0,   0,   0), FVector3(   0, 555, 0), FVector3(0, 0, 555), Red));
+    World.Add(std::make_shared<FQuad>(FPoint3(343, 554, 332), FVector3(-130, 0, 0), FVector3(0, 0, -105), Light));
+    World.Add(std::make_shared<FQuad>(FPoint3(  0,   0,   0), FVector3(   555, 0, 0), FVector3(0, 0, 555), White));
+    World.Add(std::make_shared<FQuad>(FPoint3(555, 555, 555), FVector3(-555, 0, 0), FVector3(0, 0, -555), White));
+    World.Add(std::make_shared<FQuad>(FPoint3(  0,   0, 555), FVector3(555, 0, 0), FVector3(0, 555, 0), White));
+
+    FCamera Camera;
+    Camera.AspectRatio = 1;
+    Camera.ImageWidth = 600;
+    Camera.IterationsPerPixel = 200;
+    Camera.MaxDepth = 10;
+    Camera.Background = {0., 0., 0.};
+    Camera.VFOV = 40;
+    Camera.LookFrom = {278, 278, -800};
+    Camera.LookAt = {278, 278, 0};
+    Camera.Up = {0, 1, 0};
+    Camera.DefocusAngle = 0.;
+
+    Camera.Render(World);
+
+    Camera.SaveAsBMP("Result.bmp");
+    Camera.SaveAsEXR("Result.exr");
+}
+
 int main()
 {
-    switch (6)
+    switch (7)
     {
         case 1:
         {
@@ -257,6 +291,12 @@ int main()
         case 6:
         {
             SimpleLight();
+            break;
+        }
+
+        case 7:
+        {
+            CornellBox();
             break;
         }
 
