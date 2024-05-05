@@ -4,11 +4,11 @@
 
 FPerlin::FPerlin()
 {
-    RandFloat = new double[PointCount];
+    RandVector = new FVector3[PointCount];
 
     for (int i = 0; i < PointCount; ++i)
     {
-        RandFloat[i] = RandomDouble();
+        RandVector[i] = RandomVector3(-1., 1.).GetNormalized();
     }
 
     PermX = PerlinGeneratePerm();
@@ -18,7 +18,7 @@ FPerlin::FPerlin()
 
 FPerlin::~FPerlin()
 {
-    delete[] RandFloat;
+    delete[] RandVector;
     delete[] PermX;
     delete[] PermY;
     delete[] PermZ;
@@ -29,15 +29,12 @@ double FPerlin::Noise(const FVector3& Point) const
     auto U = Point.X - std::floor(Point.X);
     auto V = Point.Y - std::floor(Point.Y);
     auto W = Point.Z - std::floor(Point.Z);
-    U = U * U * (3 - 2 * U);
-    V = V * V * (3 - 2 * V);
-    W = W * W * (3 - 2 * W);
 
     auto i = int(std::floor(Point.X));
     auto j = int(std::floor(Point.Y));
     auto k = int(std::floor(Point.Z));
 
-    double C[2][2][2];
+    FVector3 C[2][2][2];
 
     for (int di = 0; di < 2; di++)
     {
@@ -45,7 +42,7 @@ double FPerlin::Noise(const FVector3& Point) const
         {
             for (int dk = 0; dk < 2; dk++)
             {
-                C[di][dj][dk] = RandFloat[PermX[(i + di) & 255] ^ PermY[(j + dj) & 255] ^ PermZ[(k + dk) & 255]];
+                C[di][dj][dk] = RandVector[PermX[(i + di) & 255] ^ PermY[(j + dj) & 255] ^ PermZ[(k + dk) & 255]];
             }
         }
     }
@@ -78,8 +75,11 @@ void FPerlin::Permute(int* P, int N)
     }
 }
 
-double FPerlin::TrilinearInterp(double C[2][2][2], double U, double V, double W)
+double FPerlin::TrilinearInterp(const FVector3 C[2][2][2], double U, double V, double W)
 {
+    auto UU = U * U * (3 - 2 * U);
+    auto VV = V * V * (3 - 2 * V);
+    auto WW = W * W * (3 - 2 * W);
     double Accum = 0.;
 
     for (int i = 0; i < 2; i++)
@@ -88,10 +88,11 @@ double FPerlin::TrilinearInterp(double C[2][2][2], double U, double V, double W)
         {
             for (int k = 0; k < 2; k++)
             {
-                Accum += (i * U + (1 - i) * (1 - U))
-                       * (j * V + (1 - j) * (1 - V))
-                       * (k * W + (1 - k) * (1 - W))
-                       * C[i][j][k];
+                FVector3 WeightV(U - i, V - j, W - k);
+                Accum += (i * UU + (1 - i) * (1 - UU))
+                       * (j * VV + (1 - j) * (1 - VV))
+                       * (k * WW + (1 - k) * (1 - WW))
+                       * Dot(C[i][j][k], WeightV);
             }
         }
     }
