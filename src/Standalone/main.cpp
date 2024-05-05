@@ -129,7 +129,7 @@ void PerlinSpheres()
 {
     FHittableList World;
 
-    auto PerText = std::make_shared<FNoiseTexture>();
+    auto PerText = std::make_shared<FNoiseTexture>(4);
     World.Add(std::make_shared<FSphere>(FPoint3(0, -1000, 0), 1000, std::make_shared<FLambertian>(PerText)));
     World.Add(std::make_shared<FSphere>(FPoint3(0, 2, 0), 2, std::make_shared<FLambertian>(PerText)));
 

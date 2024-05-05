@@ -48,7 +48,9 @@ FColor3 FImageTexture::Value(double U, double  V, const FPoint3& Position) const
     return FColor3(ColorScale * Pixel[0], ColorScale * Pixel[1], ColorScale * Pixel[2]);
 };
 
+FNoiseTexture::FNoiseTexture(double ScaleIn) : Scale(ScaleIn) {};
+
 FColor3 FNoiseTexture::Value(double U, double  V, const FPoint3& Position) const
 {
-    return FColor3(1, 1, 1) * Noise.Noise(Position);
+    return FColor3(1, 1, 1) * Noise.Noise(Scale * Position);
 }

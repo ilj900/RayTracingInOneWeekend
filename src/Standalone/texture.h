@@ -55,9 +55,11 @@ class FNoiseTexture : public FTexture
 {
 public:
     FNoiseTexture() = default;
+    FNoiseTexture(double ScaleIn);
 
     FColor3 Value(double U, double  V, const FPoint3& Position) const override;
 
 private:
     FPerlin Noise;
+    double Scale;
 };
