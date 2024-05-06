@@ -25,7 +25,13 @@ FLambertian::FLambertian(std::shared_ptr<FTexture> TextureIn) : Texture(TextureI
 
 bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const
 {
-    auto ScatterDirection = HitRecord.Normal + RandomUnitVector();
+    auto UnitVector = RandomUnitVector();
+    if(Dot(UnitVector, HitRecord.Normal) < 0)
+    {
+        UnitVector = -UnitVector;
+    }
+
+    auto ScatterDirection = UnitVector;
     ScatterDirection.Normalize();
 
     if (ScatterDirection.NearZero())
@@ -41,8 +47,7 @@ bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3&
 
 double FLambertian::ScatteringPDF(const FRay& Ray, const FHitRecord& HitRecord, const FRay& Scattered) const
 {
-    auto CosTheta = Dot(HitRecord.Normal, Scattered.GetDirection().GetNormalized());
-    return CosTheta < 0 ? 0 : CosTheta * M_PI_INV;
+    return M_PI_INV * 0.5;
 }
 
 FMetal::FMetal(const FColor3& AlbedoIn, double FuzzIn) : Albedo(AlbedoIn), Fuzz(FuzzIn) {};
