@@ -1,3 +1,4 @@
+#include "common_defines.h"
 #include "hittable.h"
 #include "rng.h"
 
@@ -12,6 +13,11 @@ bool FMaterial::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& A
 {
     return false;
 };
+
+double FMaterial::ScatteringPDF(const FRay& Ray, const FHitRecord& HitRecord, const FRay& Scattered) const
+{
+    return 0;
+}
 
 FLambertian::FLambertian(const FColor3& AlbedoIn) : Texture(std::make_shared<FSolidColor>(AlbedoIn)) {};
 
@@ -32,6 +38,12 @@ bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3&
 
     return true;
 };
+
+double FLambertian::ScatteringPDF(const FRay& Ray, const FHitRecord& HitRecord, const FRay& Scattered) const
+{
+    auto CosTheta = Dot(HitRecord.Normal, Scattered.GetDirection().GetNormalized());
+    return CosTheta < 0 ? 0 : CosTheta * M_PI_INV;
+}
 
 FMetal::FMetal(const FColor3& AlbedoIn, double FuzzIn) : Albedo(AlbedoIn), Fuzz(FuzzIn) {};
 

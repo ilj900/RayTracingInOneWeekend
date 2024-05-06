@@ -34,7 +34,10 @@ FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &Worl
         return ColorFromEmission;
     }
 
-    FColor3 ColorFromScatter = Attenuation * RayColor(Scattered, Depth - 1, World);
+    double ScatteringPDF = HitRecord.Material->ScatteringPDF(Ray, HitRecord, Scattered);
+    double PDF = ScatteringPDF;
+
+    FColor3 ColorFromScatter = Attenuation * ScatteringPDF * RayColor(Scattered, Depth - 1, World) / PDF;
 
     return ColorFromEmission + ColorFromScatter;
 }
