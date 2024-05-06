@@ -89,4 +89,15 @@ FColor3 FDiffuseLight::Emit(double U, double V, const FPoint3& Point) const
     return Texture->Value(U, V, Point);
 }
 
+FIsotropic::FIsotropic(const FColor3& Albedo) : Texture(std::make_shared<FSolidColor>(Albedo)) {};
+
+FIsotropic::FIsotropic(std::shared_ptr<FTexture> TextureIn) : Texture(TextureIn) {};
+
+bool FIsotropic::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const
+{
+    Scattered = FRay(HitRecord.Position, RandomUnitVector(), HitRecord.T);
+    Attenuation = Texture->Value(HitRecord.U, HitRecord.V, HitRecord.Position);
+    return true;
+}
+
 

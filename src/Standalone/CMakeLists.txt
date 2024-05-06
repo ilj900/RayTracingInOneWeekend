@@ -3,6 +3,7 @@ set(INCLUDE
         bvh_node.h
         camera.h
         common_defines.h
+        constant_media.h
         hittable.h
         hittable_list.h
         interval.h
@@ -17,6 +18,7 @@ set(SOURCE
         aabb.cpp
         bvh_node.cpp
         camera.cpp
+        constant_media.cpp
         hittable.cpp
         hittable_list.cpp
         interval.cpp

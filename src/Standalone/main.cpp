@@ -1,5 +1,6 @@
 #include "bvh_node.h"
 #include "camera.h"
+#include "constant_media.h"
 #include "hittable_list.h"
 #include "material.h"
 #include "quad.h"
@@ -264,9 +265,53 @@ void CornellBox()
     Camera.SaveAsEXR("Result.exr");
 }
 
+void CornellSmoke()
+{
+    FHittableList World;
+
+    auto Red = std::make_shared<FLambertian>(FColor3(0.65, 0.05, 0.05));
+    auto White = std::make_shared<FLambertian>(FColor3(0.73, 0.73, 0.73));
+    auto Green = std::make_shared<FLambertian>(FColor3(0.12, 0.45, 0.15));
+    auto Light = std::make_shared<FDiffuseLight>(FColor3(15, 15, 15));
+
+    World.Add(std::make_shared<FQuad>(FPoint3(555,   0,   0), FVector3(   0, 555, 0), FVector3(0, 0, 555), Green));
+    World.Add(std::make_shared<FQuad>(FPoint3(  0,   0,   0), FVector3(   0, 555, 0), FVector3(0, 0, 555), Red));
+    World.Add(std::make_shared<FQuad>(FPoint3(343, 554, 332), FVector3(-130, 0, 0), FVector3(0, 0, -105), Light));
+    World.Add(std::make_shared<FQuad>(FPoint3(  0,   0,   0), FVector3(   555, 0, 0), FVector3(0, 0, 555), White));
+    World.Add(std::make_shared<FQuad>(FPoint3(555, 555, 555), FVector3(-555, 0, 0), FVector3(0, 0, -555), White));
+    World.Add(std::make_shared<FQuad>(FPoint3(  0,   0, 555), FVector3(555, 0, 0), FVector3(0, 555, 0), White));
+
+    std::shared_ptr<FHittable> Box1 = Box(FPoint3(0, 0, 0), FPoint3(165, 330, 165), White);
+    Box1 = std::make_shared<FRotateY>(Box1, 15);
+    Box1 = std::make_shared<FTranslate>(Box1, FVector3(265, 0, 295));
+    World.Add(std::make_shared<FConstantMedia>(Box1, 0.01, FColor3(0, 0, 0)));
+
+    std::shared_ptr<FHittable> Box2 = Box(FPoint3(0, 0, 0), FPoint3(165, 165, 165), White);
+    Box2 = std::make_shared<FRotateY>(Box2, -18);
+    Box2 = std::make_shared<FTranslate>(Box2, FVector3(130, 0, 65));
+    World.Add(std::make_shared<FConstantMedia>(Box2, 0.01, FColor3(1, 1, 1)));
+
+    FCamera Camera;
+    Camera.AspectRatio = 1;
+    Camera.ImageWidth = 1080;
+    Camera.IterationsPerPixel = 200;
+    Camera.MaxDepth = 10;
+    Camera.Background = {0., 0., 0.};
+    Camera.VFOV = 40;
+    Camera.LookFrom = {278, 278, -800};
+    Camera.LookAt = {278, 278, 0};
+    Camera.Up = {0, 1, 0};
+    Camera.DefocusAngle = 0.;
+
+    Camera.Render(World);
+
+    Camera.SaveAsBMP("Result.bmp");
+    Camera.SaveAsEXR("Result.exr");
+}
+
 int main()
 {
-    switch (7)
+    switch (8)
     {
         case 1:
         {
@@ -307,6 +352,12 @@ int main()
         case 7:
         {
             CornellBox();
+            break;
+        }
+
+        case 8:
+        {
+            CornellSmoke();
             break;
         }
 

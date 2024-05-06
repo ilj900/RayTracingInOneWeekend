@@ -61,3 +61,15 @@ public:
 private:
     std::shared_ptr<FTexture> Texture;
 };
+
+class FIsotropic : public FMaterial
+{
+public:
+    FIsotropic(const FColor3& Albedo);
+    FIsotropic(std::shared_ptr<FTexture> TextureIn);
+
+    bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const override;
+
+private:
+    std::shared_ptr<FTexture> Texture;
+};
