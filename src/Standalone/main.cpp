@@ -309,9 +309,84 @@ void CornellSmoke()
     Camera.SaveAsEXR("Result.exr");
 }
 
+void FinalScene(int ImageWidth, int SamplesPerPixel, int MaxDepth)
+{
+    FHittableList Boxes1;
+    auto Ground = std::make_shared<FLambertian>(FColor3(0.48, 0.83, 0.53));
+
+    int BoxesPerSide = 20;
+    for (int i = 0; i < BoxesPerSide; ++i)
+    {
+        for (int j = 0; j < BoxesPerSide; j++)
+        {
+            auto W = 100.;
+            auto X0 = -1000. + i * W;
+            auto Z0 = -1000. + j * W;
+            auto Y0 = 0.;
+            auto X1 = X0 + W;
+            auto Y1 = RandomDouble(1, 101);
+            auto Z1 = Z0 + W;
+
+            Boxes1.Add(Box(FPoint3(X0, Y0, Z0), FPoint3(X1, Y1, Z1), Ground));
+        }
+    }
+
+    FHittableList World;
+    World.Add(std::make_shared<FBVHNode>(Boxes1));
+
+    auto Light = std::make_shared<FDiffuseLight>(FColor3(7, 7, 7));
+    World.Add(std::make_shared<FQuad>(FPoint3(123, 554, 147), FVector3(300, 0, 0), FVector3(0, 0, 265), Light));
+
+    auto Center1 = FPoint3(400, 400, 200);
+    auto Center2 = Center1 + FVector3(30, 0, 0);
+    auto SphereMaterial = std::make_shared<FLambertian>(FColor3(0.7, 0.3, 0.1));
+    World.Add(std::make_shared<FSphere>(Center1, Center2, 50, SphereMaterial));
+
+    World.Add(std::make_shared<FSphere>(FPoint3(260, 150, 45), 50, std::make_shared<FDielectric>(1.5)));
+    World.Add(std::make_shared<FSphere>(FPoint3(0, 150, 145), 50, std::make_shared<FMetal>(FColor3(0.8, 0.8, 0.9), 1.)));
+
+    auto Boundary = std::make_shared<FSphere>(FPoint3(360, 150, 145), 70, std::make_shared<FDielectric>(1.5));
+    World.Add(Boundary);
+    World.Add(std::make_shared<FConstantMedia>(Boundary, 0.2, FColor3(0.2, 0.4, 0.9)));
+    Boundary = std::make_shared<FSphere>(FPoint3(0, 0, 0), 5000, std::make_shared<FDielectric>(1.5));
+    World.Add(std::make_shared<FConstantMedia>(Boundary, 0.0001, FColor3(1, 1, 1)));
+
+    auto EarthMaterial = std::make_shared<FLambertian>(std::make_shared<FImageTexture>("earthmap.jpg"));
+    World.Add(std::make_shared<FSphere>(FPoint3(400, 200, 400), 100, EarthMaterial));
+    auto PerlinTexture = std::make_shared<FNoiseTexture>(0.2);
+    World.Add(std::make_shared<FSphere>(FPoint3(220, 280, 300), 80, std::make_shared<FLambertian>(PerlinTexture)));
+
+    FHittableList Boxes2;
+    auto White = std::make_shared<FLambertian>(FColor3(0.73, 0.73, 0.73));
+    int NS = 1000;
+    for (int j = 0; j < NS; j++)
+    {
+        Boxes2.Add(std::make_shared<FSphere>(FPoint3(RandomDouble(0, 165), RandomDouble(0, 165), RandomDouble(0, 165)), 10, White));
+    }
+
+    World.Add(std::make_shared<FTranslate>(std::make_shared<FRotateY>(std::make_shared<FBVHNode>(Boxes2), 15), FVector3(-100, 270, 395)));
+
+    FCamera Camera;
+    Camera.AspectRatio = 1;
+    Camera.ImageWidth = ImageWidth;
+    Camera.IterationsPerPixel = SamplesPerPixel;
+    Camera.MaxDepth = MaxDepth;
+    Camera.Background = {0., 0., 0.};
+    Camera.VFOV = 40;
+    Camera.LookFrom = {478, 278, -600};
+    Camera.LookAt = {278, 278, 0};
+    Camera.Up = {0, 1, 0};
+    Camera.DefocusAngle = 0.;
+
+    Camera.Render(World);
+
+    Camera.SaveAsBMP("Result.bmp");
+    Camera.SaveAsEXR("Result.exr");
+}
+
 int main()
 {
-    switch (8)
+    switch (9)
     {
         case 1:
         {
@@ -358,6 +433,18 @@ int main()
         case 8:
         {
             CornellSmoke();
+            break;
+        }
+
+        case 9:
+        {
+            FinalScene(400, 250, 4);
+            break;
+        }
+
+        case 10:
+        {
+            FinalScene(1080, 10000, 10);
             break;
         }
 
