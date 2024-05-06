@@ -15,7 +15,7 @@ public:
 
     double AspectRatio = 16.0 / 9.0;
     uint32_t ImageWidth = 1920;
-    uint32_t IterationsPerPixel = 10;
+    uint32_t SamplesPerPixel = 10;
     uint32_t MaxDepth = 10;
     double VFOV = 90;
     FPoint3 LookFrom = {0, 0, 0};
@@ -27,12 +27,14 @@ public:
 
 private:
     void Initialize();
-    FRay GetRay(uint32_t X, uint32_t Y);
+    FRay GetRay(uint32_t X, uint32_t Y, uint32_t SX, uint32_t SY);
     FColor3 RayColor(const FRay& Ray, uint32_t Depth, const FHittable& World);
     void WriteColor(const FColor3& PixelColor, uint32_t PixelIndex);
     double LinearToGamma(double Value) const;
 
     uint32_t ImageHeight;
+    int SqrtSPP;
+    double RecipSqrtSPP;
     FPoint3 CameraCenter;
     FVector3 Pixel00;
     FVector3 PixelDeltaU;

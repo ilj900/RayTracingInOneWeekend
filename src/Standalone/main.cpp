@@ -63,7 +63,7 @@ void BouncingSpheres()
     FCamera Camera;
     Camera.AspectRatio = 16.0 / 9.0;
     Camera.ImageWidth = 1920;
-    Camera.IterationsPerPixel = 30;
+    Camera.SamplesPerPixel = 30;
     Camera.MaxDepth = 10;
     Camera.VFOV = 20;
     Camera.LookFrom = {13, 2, 3};
@@ -91,7 +91,7 @@ void CheckeredSpheres()
     FCamera Camera;
     Camera.AspectRatio = 16.0 / 9.0;
     Camera.ImageWidth = 1920;
-    Camera.IterationsPerPixel = 30;
+    Camera.SamplesPerPixel = 30;
     Camera.MaxDepth = 10;
     Camera.VFOV = 20;
     Camera.LookFrom = {13, 2, 3};
@@ -115,7 +115,7 @@ void Earth()
     FCamera Camera;
     Camera.AspectRatio = 16.0 / 9.0;
     Camera.ImageWidth = 1920;
-    Camera.IterationsPerPixel = 30;
+    Camera.SamplesPerPixel = 30;
     Camera.MaxDepth = 10;
     Camera.VFOV = 20;
     Camera.LookFrom = {0, 0, 12};
@@ -141,7 +141,7 @@ void PerlinSpheres()
     FCamera Camera;
     Camera.AspectRatio = 16.0 / 9.0;
     Camera.ImageWidth = 1920;
-    Camera.IterationsPerPixel = 30;
+    Camera.SamplesPerPixel = 30;
     Camera.MaxDepth = 10;
     Camera.VFOV = 20;
     Camera.LookFrom = {13, 2, 3};
@@ -175,7 +175,7 @@ void Quads()
     FCamera Camera;
     Camera.AspectRatio = 16.0 / 9.0;
     Camera.ImageWidth = 1920;
-    Camera.IterationsPerPixel = 30;
+    Camera.SamplesPerPixel = 30;
     Camera.MaxDepth = 10;
     Camera.VFOV = 80;
     Camera.LookFrom = {0, 0, 9};
@@ -206,7 +206,7 @@ void SimpleLight()
     FCamera Camera;
     Camera.AspectRatio = 16.0 / 9.0;
     Camera.ImageWidth = 1920;
-    Camera.IterationsPerPixel = 30;
+    Camera.SamplesPerPixel = 30;
     Camera.MaxDepth = 10;
     Camera.VFOV = 20;
     Camera.LookFrom = {26, 3, 6};
@@ -250,7 +250,7 @@ void CornellBox()
     FCamera Camera;
     Camera.AspectRatio = 1;
     Camera.ImageWidth = 1080;
-    Camera.IterationsPerPixel = 20;
+    Camera.SamplesPerPixel = 64;
     Camera.MaxDepth = 10;
     Camera.Background = {0., 0., 0.};
     Camera.VFOV = 40;
@@ -294,7 +294,7 @@ void CornellSmoke()
     FCamera Camera;
     Camera.AspectRatio = 1;
     Camera.ImageWidth = 1080;
-    Camera.IterationsPerPixel = 200;
+    Camera.SamplesPerPixel = 200;
     Camera.MaxDepth = 10;
     Camera.Background = {0., 0., 0.};
     Camera.VFOV = 40;
@@ -369,7 +369,7 @@ void FinalScene(int ImageWidth, int SamplesPerPixel, int MaxDepth)
     FCamera Camera;
     Camera.AspectRatio = 1;
     Camera.ImageWidth = ImageWidth;
-    Camera.IterationsPerPixel = SamplesPerPixel;
+    Camera.SamplesPerPixel = SamplesPerPixel;
     Camera.MaxDepth = MaxDepth;
     Camera.Background = {0., 0., 0.};
     Camera.VFOV = 40;
@@ -386,7 +386,7 @@ void FinalScene(int ImageWidth, int SamplesPerPixel, int MaxDepth)
 
 int main()
 {
-    switch (9)
+    switch (7)
     {
         case 1:
         {

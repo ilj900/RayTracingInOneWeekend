@@ -43,6 +43,8 @@ void FCamera::Initialize()
 {
     ImageHeight = ImageWidth / AspectRatio;
     ImageHeight = (ImageHeight < 1) ? 1 : ImageHeight;
+    SqrtSPP = int(sqrt(SamplesPerPixel));
+    RecipSqrtSPP = 1. / SqrtSPP;
     ImageData = std::vector<double>(ImageWidth * ImageHeight * 4);
 
     CameraCenter = LookFrom;
@@ -61,18 +63,22 @@ void FCamera::Initialize()
     PixelDeltaU = ViewportU / double(ImageWidth);
     PixelDeltaV = ViewportV / double(ImageHeight);
 
-    Pixel00 = CameraCenter - (FocusDistance * W) - ViewportU * 0.5 - ViewportV * 0.5;;
+    Pixel00 = CameraCenter - (FocusDistance * W) - ViewportU * 0.5 - ViewportV * 0.5;
 
     double DefocusRadius = FocusDistance * tan(DegreesToRadians(DefocusAngle * 0.5f));
     DefocusDiscU = U * DefocusRadius;
     DefocusDiscV = V * DefocusRadius;
 }
 
-FRay FCamera::GetRay(uint32_t X, uint32_t Y)
+FRay FCamera::GetRay(uint32_t X, uint32_t Y, uint32_t SX, uint32_t SY)
 {
-    auto PixelUpperLeft = Pixel00 + (PixelDeltaU * X) + (PixelDeltaV * Y);
-    auto [JitterX, JitterY] = RNG2();
-    auto JitteredPixel = PixelUpperLeft + (PixelDeltaU * JitterX) + (PixelDeltaV * JitterY);
+    auto PX = ((SX + RandomDouble()) * RecipSqrtSPP) - 0.5;
+    auto PY = ((SY + RandomDouble()) * RecipSqrtSPP) - 0.5;
+    FVector3 Offset = {PX, PY, 0};
+
+    auto PixelSample = Pixel00 + ((X + Offset.X) * PixelDeltaU) + ((Y + Offset.Y) * PixelDeltaV);
+
+
     auto RayOrigin = CameraCenter;
 
     if (DefocusAngle > 0)
@@ -81,7 +87,7 @@ FRay FCamera::GetRay(uint32_t X, uint32_t Y)
         RayOrigin = CameraCenter + (PointOnDisc.X * DefocusDiscU) + (PointOnDisc.Y * DefocusDiscV);
     }
 
-    auto RayDirection = JitteredPixel - RayOrigin; /// Not normalized
+    auto RayDirection = PixelSample - RayOrigin; /// Not normalized
     FRay Ray(RayOrigin, RayDirection, RandomDouble());
     return Ray;
 }
@@ -105,11 +111,14 @@ void FCamera::Render(const FHittable &World)
 
             for(uint32_t j = 0; j < ImageWidth; ++j)
             {
-                for (uint32_t k = 0; k < IterationsPerPixel; ++k)
+                for (uint32_t si = 0; si < SqrtSPP; si++)
                 {
-                    auto Ray = GetRay(j, Line);
-                    FColor3 PixelColor = RayColor(Ray, MaxDepth, World);
-                    WriteColor(PixelColor, Line * ImageWidth + j);
+                    for (uint32_t sj = 0; sj < SqrtSPP; sj++)
+                    {
+                        auto Ray = GetRay(j, Line, si, sj);
+                        FColor3 PixelColor = RayColor(Ray, MaxDepth, World);
+                        WriteColor(PixelColor, Line * ImageWidth + j);
+                    }
                 }
             }
         }
