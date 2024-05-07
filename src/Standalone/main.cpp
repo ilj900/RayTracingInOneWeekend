@@ -392,17 +392,17 @@ void FinalScene(int ImageWidth, int SamplesPerPixel, int MaxDepth)
 
 double f(double d)
 {
-    return  2. * d;
+    return 8. * pow(d, 1. / 3.);
 }
 
 double pdf(double x)
 {
-    return 0.5;
+    return (3. / 8.) * x * x;
 }
 
 int main()
 {
-    int N = 100000;
+    int N = 1;
 
     auto Sum = 0.;
 
