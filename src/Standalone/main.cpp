@@ -390,26 +390,28 @@ void FinalScene(int ImageWidth, int SamplesPerPixel, int MaxDepth)
     Camera.SaveAsEXR("Result.exr");
 }
 
-double f(double d)
+double f(const FVector3& d)
 {
-    return 8. * pow(d, 1. / 3.);
+    auto CosineSquared = d.Z * d.Z;
+    return CosineSquared;
 }
 
-double pdf(double x)
+double pdf(const FVector3& d)
 {
-    return (3. / 8.) * x * x;
+    return 1. / (4. * M_PI);
 }
 
 int main()
 {
-    int N = 1;
+    int N = 1000000;
 
     auto Sum = 0.;
 
     for (int i = 0; i < N; i++)
     {
-        auto X = f(RandomDouble());
-        Sum += X * X / pdf(X);
+        auto D = RandomUnitVector();
+        auto X = f(D);
+        Sum += X / pdf(D);
     }
 
     std::cout <<std::fixed << std::setprecision(12);
