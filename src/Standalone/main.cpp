@@ -390,52 +390,30 @@ void FinalScene(int ImageWidth, int SamplesPerPixel, int MaxDepth)
     Camera.SaveAsEXR("Result.exr");
 }
 
-struct FSample
+double f(double d)
 {
-    double X;
-    double PX;
-};
+    return  2. * d;
+}
 
-bool CompareByX(const FSample& A, const FSample& B)
+double pdf(double x)
 {
-    return A.X < B.X;
+    return 0.5;
 }
 
 int main()
 {
-    uint64_t N = 100000;
-    double Sum = 0;
+    int N = 100000;
 
-    std::vector<FSample> Samples;
-    for (uint64_t i = 0; i < N; ++i)
+    auto Sum = 0.;
+
+    for (int i = 0; i < N; i++)
     {
-        auto X = RandomDouble(0, 2 * M_PI);
-        auto SinX = sin(X);
-
-        auto PX = exp(-X / (2 * M_PI)) * SinX * SinX;
-        Sum += PX;
-        Samples.emplace_back(FSample{X, PX});
+        auto X = f(RandomDouble());
+        Sum += X * X / pdf(X);
     }
 
-    std::sort(Samples.begin(), Samples.end(), CompareByX);
-
-    double HalfSum = Sum / 2.;
-    double HalfwayPoint = 0.;
-    double Accum = 0.;
-    for (uint64_t i = 0; i < N; i++)
-    {
-        Accum += Samples[i].PX;
-        if (Accum >= HalfSum)
-        {
-            HalfwayPoint = Samples[i].X;
-            break;
-        }
-    }
-
-    std::cout << std::fixed << std::setprecision(12);
-    std::cout << "Average = " << Sum / N << '\n';
-    std::cout << "Area under curve = " << 2 * M_PI * Sum / N << "\n";
-    std::cout << "Halfway = " << HalfwayPoint << std::endl;
+    std::cout <<std::fixed << std::setprecision(12);
+    std::cout << "I = " << Sum / N << std::endl;
 
     return 0;
 
