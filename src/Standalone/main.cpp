@@ -7,6 +7,9 @@
 #include "sphere.h"
 #include "texture.h"
 
+#include "common_defines.h"
+#include <algorithm>
+#include <cmath>
 #include <iomanip>
 #include <iostream>
 
@@ -387,41 +390,52 @@ void FinalScene(int ImageWidth, int SamplesPerPixel, int MaxDepth)
     Camera.SaveAsEXR("Result.exr");
 }
 
+struct FSample
+{
+    double X;
+    double PX;
+};
+
+bool CompareByX(const FSample& A, const FSample& B)
+{
+    return A.X < B.X;
+}
+
 int main()
 {
-    uint64_t InsideCircle = 0;
-    uint64_t InsideCircleStratified = 0;
-    uint64_t SqrtN = 1000;
-    uint64_t Runs = 1000;
+    uint64_t N = 100000;
+    double Sum = 0;
 
-    for (int r = 0; r < Runs; ++r)
+    std::vector<FSample> Samples;
+    for (uint64_t i = 0; i < N; ++i)
     {
-        for (int i = 0; i < SqrtN; ++i)
+        auto X = RandomDouble(0, 2 * M_PI);
+        auto SinX = sin(X);
+
+        auto PX = exp(-X / (2 * M_PI)) * SinX * SinX;
+        Sum += PX;
+        Samples.emplace_back(FSample{X, PX});
+    }
+
+    std::sort(Samples.begin(), Samples.end(), CompareByX);
+
+    double HalfSum = Sum / 2.;
+    double HalfwayPoint = 0.;
+    double Accum = 0.;
+    for (uint64_t i = 0; i < N; i++)
+    {
+        Accum += Samples[i].PX;
+        if (Accum >= HalfSum)
         {
-            for (int j = 0; j < SqrtN; ++j)
-            {
-                auto X = RandomDouble(-1, 1);
-                auto Y = RandomDouble(-1, 1);
-
-                if (X * X + Y * Y < 1)
-                {
-                    InsideCircle++;
-                }
-
-                X = 2. * ((i + RandomDouble()) / SqrtN) - 1;
-                Y = 2. * ((j + RandomDouble()) / SqrtN) - 1;
-
-                if (X * X + Y * Y < 1)
-                {
-                    InsideCircleStratified++;
-                }
-            }
+            HalfwayPoint = Samples[i].X;
+            break;
         }
     }
 
     std::cout << std::fixed << std::setprecision(12);
-    std::cout << "Regular Estimate of Pi = " << 4. * InsideCircle / double(SqrtN * SqrtN * Runs) << std::endl;
-    std::cout << "Stratified Estimate of Pi = " << 4. * InsideCircleStratified / double(SqrtN * SqrtN * Runs) << std::endl;
+    std::cout << "Average = " << Sum / N << '\n';
+    std::cout << "Area under curve = " << 2 * M_PI * Sum / N << "\n";
+    std::cout << "Halfway = " << HalfwayPoint << std::endl;
 
     return 0;
 
