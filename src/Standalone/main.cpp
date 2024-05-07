@@ -389,10 +389,10 @@ void FinalScene(int ImageWidth, int SamplesPerPixel, int MaxDepth)
 
 int main()
 {
-    int N =100000;
-
+    int Runs = 0;
     int InsideCircle = 0;
-    for (int i = 0; i < N; ++i)
+
+    for (;; ++Runs)
     {
         auto X = RandomDouble(-1, 1);
         auto Y = RandomDouble(-1, 1);
@@ -400,9 +400,13 @@ int main()
         {
             InsideCircle++;
         }
+
+        if (Runs % 100000 == 0)
+        {
+            std::cout << std::fixed << std::setprecision(12);
+            std::cout << "Estimate of Pi = " << 4. * InsideCircle / double(Runs) << std::endl;
+        }
     }
-    std::cout << std::fixed << std::setprecision(12);
-    std::cout << "Estimate of Pi = " << 4. * InsideCircle / double(N) << std::endl;
 
     return 1;
 
