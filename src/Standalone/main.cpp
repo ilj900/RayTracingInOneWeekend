@@ -7,12 +7,6 @@
 #include "sphere.h"
 #include "texture.h"
 
-#include "common_defines.h"
-#include <algorithm>
-#include <cmath>
-#include <iomanip>
-#include <iostream>
-
 void BouncingSpheres()
 {
     FHittableList World;
@@ -388,17 +382,6 @@ void FinalScene(int ImageWidth, int SamplesPerPixel, int MaxDepth)
 
     Camera.SaveAsBMP("Result.bmp");
     Camera.SaveAsEXR("Result.exr");
-}
-
-double f(const FVector3& d)
-{
-    auto CosineSquared = d.Z * d.Z;
-    return CosineSquared;
-}
-
-double pdf(const FVector3& d)
-{
-    return 1. / (4. * M_PI);
 }
 
 int main()
