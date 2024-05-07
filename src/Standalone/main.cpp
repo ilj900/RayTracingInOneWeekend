@@ -403,22 +403,6 @@ double pdf(const FVector3& d)
 
 int main()
 {
-    int N = 1000000;
-
-    auto Sum = 0.;
-
-    for (int i = 0; i < N; i++)
-    {
-        auto D = RandomUnitVector();
-        auto X = f(D);
-        Sum += X / pdf(D);
-    }
-
-    std::cout <<std::fixed << std::setprecision(12);
-    std::cout << "I = " << Sum / N << std::endl;
-
-    return 0;
-
     switch (7)
     {
         case 1:
