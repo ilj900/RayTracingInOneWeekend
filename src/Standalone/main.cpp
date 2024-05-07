@@ -7,6 +7,9 @@
 #include "sphere.h"
 #include "texture.h"
 
+#include <iomanip>
+#include <iostream>
+
 void BouncingSpheres()
 {
     FHittableList World;
@@ -386,6 +389,23 @@ void FinalScene(int ImageWidth, int SamplesPerPixel, int MaxDepth)
 
 int main()
 {
+    int N =100000;
+
+    int InsideCircle = 0;
+    for (int i = 0; i < N; ++i)
+    {
+        auto X = RandomDouble(-1, 1);
+        auto Y = RandomDouble(-1, 1);
+        if (X * X + Y * Y < 1)
+        {
+            InsideCircle++;
+        }
+    }
+    std::cout << std::fixed << std::setprecision(12);
+    std::cout << "Estimate of Pi = " << 4. * InsideCircle / double(N) << std::endl;
+
+    return 1;
+
     switch (7)
     {
         case 1:
