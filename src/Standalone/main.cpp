@@ -389,26 +389,37 @@ void FinalScene(int ImageWidth, int SamplesPerPixel, int MaxDepth)
 
 int main()
 {
-    int Runs = 0;
-    int InsideCircle = 0;
+    uint64_t InsideCircle = 0;
+    uint64_t InsideCircleStratified = 0;
+    uint64_t SqrtN = 1000;
 
-    for (;; ++Runs)
+    for (int i = 0; i < SqrtN; ++i)
     {
-        auto X = RandomDouble(-1, 1);
-        auto Y = RandomDouble(-1, 1);
-        if (X * X + Y * Y < 1)
+        for (int j = 0; j < SqrtN; ++j)
         {
-            InsideCircle++;
-        }
+            auto X = RandomDouble(-1, 1);
+            auto Y = RandomDouble(-1, 1);
 
-        if (Runs % 100000 == 0)
-        {
-            std::cout << std::fixed << std::setprecision(12);
-            std::cout << "Estimate of Pi = " << 4. * InsideCircle / double(Runs) << std::endl;
+            if (X * X + Y * Y < 1)
+            {
+                InsideCircle++;
+            }
+
+            X = 2. * ((i + RandomDouble()) / SqrtN) - 1;
+            Y = 2. * ((j + RandomDouble()) / SqrtN) - 1;
+
+            if (X * X + Y * Y < 1)
+            {
+                InsideCircleStratified++;
+            }
         }
     }
 
-    return 1;
+    std::cout << std::fixed << std::setprecision(12);
+    std::cout << "Regular Estimate of Pi = " << 4. * InsideCircle / double(SqrtN * SqrtN) << std::endl;
+    std::cout << "Stratified Estimate of Pi = " << 4. * InsideCircleStratified / double(SqrtN * SqrtN) << std::endl;
+
+    return 0;
 
     switch (7)
     {
