@@ -10,6 +10,7 @@ set(INCLUDE
         image_wrapper.h
         material.h
         onb.h
+        pdf.h
         perlin.h
         quad.h
         sphere.h
@@ -27,6 +28,7 @@ set(SOURCE
         main.cpp
         material.cpp
         onb.cpp
+        pdf.cpp
         perlin.cpp
         quad.cpp
         sphere.cpp

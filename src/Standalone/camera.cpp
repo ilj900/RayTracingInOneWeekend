@@ -4,6 +4,7 @@
 #include "common_defines.h"
 #include "camera.h"
 #include "material.h"
+#include "pdf.h"
 
 #include <iostream>
 #include <thread>
@@ -27,37 +28,20 @@ FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &Worl
 
     FRay Scattered;
     FColor3 Attenuation;
-    double PDF;
+    double PDFValue;
     FColor3 ColorFromEmission = HitRecord.Material->Emit(Ray, HitRecord, HitRecord.U, HitRecord.V, HitRecord.Position);
 
-    if (!HitRecord.Material->Scatter(Ray, HitRecord, Attenuation, Scattered, PDF))
+    if (!HitRecord.Material->Scatter(Ray, HitRecord, Attenuation, Scattered, PDFValue))
     {
         return ColorFromEmission;
     }
 
-    auto OnLight = FPoint3(RandomDouble(213, 343), 554, RandomDouble(227, 332));
-    auto ToLight = OnLight - HitRecord.Position;
-    auto Distance2 = ToLight.Length2();
-    ToLight.Normalize();
-
-    if (Dot(ToLight, HitRecord.Normal) < 0.)
-    {
-        return ColorFromEmission;
-    }
-
-    double LightArea = (343 - 213) * (332 - 227);
-    auto LightCos = fabs(ToLight.Y);
-    if (LightCos < 0.000001)
-    {
-        return ColorFromEmission;
-    }
-
-    PDF = Distance2 / (LightCos * LightArea);
-    Scattered = FRay(HitRecord.Position, ToLight, Ray.GetTime());
+    FCosinePDF SurfacePDF(HitRecord.Normal);
+    Scattered = FRay(HitRecord.Position, SurfacePDF.Generate(), Ray.GetTime());
+    PDFValue = SurfacePDF.Value(Scattered.GetDirection());
 
     double ScatteringPDF = HitRecord.Material->ScatteringPDF(Ray, HitRecord, Scattered);
-
-    FColor3 ColorFromScatter = Attenuation * ScatteringPDF * RayColor(Scattered, Depth - 1, World) / PDF;
+    FColor3 ColorFromScatter = (Attenuation * ScatteringPDF * RayColor(Scattered, Depth - 1, World)) / PDFValue;
 
     return ColorFromEmission + ColorFromScatter;
 }
