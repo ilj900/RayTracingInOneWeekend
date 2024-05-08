@@ -78,7 +78,7 @@ void BouncingSpheres()
     Camera.FocusDistance = 10;
     Camera.Background = {.7, 0.8, 1.};
 
-    Camera.Render(World);
+    //Camera.Render(World);
 
     Camera.SaveAsBMP("Result.bmp");
     Camera.SaveAsEXR("Result.exr");
@@ -105,7 +105,7 @@ void CheckeredSpheres()
     Camera.DefocusAngle = 0.;
     Camera.Background = {.7, 0.8, 1.};
 
-    Camera.Render(World);
+    //Camera.Render(World);
 
     Camera.SaveAsBMP("Result.bmp");
     Camera.SaveAsEXR("Result.exr");
@@ -129,7 +129,7 @@ void Earth()
     Camera.DefocusAngle = 0.;
     Camera.Background = {.7, 0.8, 1.};
 
-    Camera.Render(FHittableList(Globe));
+    //Camera.Render(FHittableList(Globe));
 
     Camera.SaveAsBMP("Result.bmp");
     Camera.SaveAsEXR("Result.exr");
@@ -155,7 +155,7 @@ void PerlinSpheres()
     Camera.DefocusAngle = 0.;
     Camera.Background = {.7, 0.8, 1.};
 
-    Camera.Render(World);
+    //Camera.Render(World);
 
     Camera.SaveAsBMP("Result.bmp");
     Camera.SaveAsEXR("Result.exr");
@@ -189,7 +189,7 @@ void Quads()
     Camera.DefocusAngle = 0.;
     Camera.Background = {.7, 0.8, 1.};
 
-    Camera.Render(World);
+    //Camera.Render(World);
 
     Camera.SaveAsBMP("Result.bmp");
     Camera.SaveAsEXR("Result.exr");
@@ -220,7 +220,7 @@ void SimpleLight()
     Camera.DefocusAngle = 0.;
     Camera.Background = {0., 0., 0.};
 
-    Camera.Render(World);
+    //Camera.Render(World);
 
     Camera.SaveAsBMP("Result.bmp");
     Camera.SaveAsEXR("Result.exr");
@@ -241,6 +241,10 @@ void CornellBox()
     World.Add(std::make_shared<FQuad>(FPoint3(  0,   0,   0), FVector3(   555, 0, 0), FVector3(0, 0, 555), White));
     World.Add(std::make_shared<FQuad>(FPoint3(555, 555, 555), FVector3(-555, 0, 0), FVector3(0, 0, -555), White));
     World.Add(std::make_shared<FQuad>(FPoint3(  0,   0, 555), FVector3(555, 0, 0), FVector3(0, 555, 0), White));
+
+    FHittableList Lights;
+    auto M = std::shared_ptr<FMaterial>();
+    Lights.Add(std::make_shared<FQuad>(FPoint3(343, 554, 332), FVector3(-130, 0, 0), FVector3(0, 0, -105), M));
 
     std::shared_ptr<FHittable> Box1 = Box(FPoint3(0, 0, 0), FPoint3(165, 330, 165), White);
     Box1 = std::make_shared<FRotateY>(Box1, 15);
@@ -264,7 +268,7 @@ void CornellBox()
     Camera.Up = {0, 1, 0};
     Camera.DefocusAngle = 0.;
 
-    Camera.Render(World);
+    Camera.Render(World, Lights);
 
     Camera.SaveAsBMP("Result.bmp");
     Camera.SaveAsEXR("Result.exr");
@@ -308,7 +312,7 @@ void CornellSmoke()
     Camera.Up = {0, 1, 0};
     Camera.DefocusAngle = 0.;
 
-    Camera.Render(World);
+    //Camera.Render(World);
 
     Camera.SaveAsBMP("Result.bmp");
     Camera.SaveAsEXR("Result.exr");
@@ -383,7 +387,7 @@ void FinalScene(int ImageWidth, int SamplesPerPixel, int MaxDepth)
     Camera.Up = {0, 1, 0};
     Camera.DefocusAngle = 0.;
 
-    Camera.Render(World);
+    //Camera.Render(World);
 
     Camera.SaveAsBMP("Result.bmp");
     Camera.SaveAsEXR("Result.exr");

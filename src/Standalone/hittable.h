@@ -30,6 +30,10 @@ public:
     virtual bool Hit(const FRay& Ray, FInterval Interval, FHitRecord& HitRecordOut) const = 0;
 
     virtual FAABB BoundingBox() const = 0;
+
+    virtual double PDFValue(const FPoint3& Origin, const FVector3& Direction) const;
+
+    virtual FVector3 Random(const FPoint3& Origin) const;
 };
 
 class FTranslate : public FHittable

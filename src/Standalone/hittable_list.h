@@ -2,6 +2,7 @@
 
 #include "aabb.h"
 #include "hittable.h"
+#include "pdf.h"
 
 #include <memory>
 #include <vector>
@@ -23,4 +24,16 @@ public:
 
 private:
     FAABB BBox;
+};
+
+class FHittablePDF : public FPDF
+{
+public:
+    FHittablePDF(const FHittable& ObjectsIn, const FPoint3& OriginIn);
+    double Value(const FVector3 Direction) const override;
+    FVector3 Generate() const override;
+
+private:
+    const FHittable& Objects;
+    FPoint3 Origin;
 };

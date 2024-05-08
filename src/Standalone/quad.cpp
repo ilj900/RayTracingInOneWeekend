@@ -1,3 +1,6 @@
+#include "common_defines.h"
+#include "rng.h"
+
 #include "quad.h"
 
 FQuad::FQuad(const FPoint3& QIn, const FVector3 UIn, const FVector3 VIn, std::shared_ptr<FMaterial> MaterialIn) : Q(QIn), U(UIn), V(VIn), Material(MaterialIn)
@@ -6,6 +9,8 @@ FQuad::FQuad(const FPoint3& QIn, const FVector3 UIn, const FVector3 VIn, std::sh
     Normal = N.GetNormalized();
     D = Dot(Normal, Q);
     W = N / Dot(N, N);
+
+    Area = N.Length2();
 
     SetBoundingBox();
 };
@@ -71,6 +76,26 @@ bool FQuad::IsInterior(double A, double B, FHitRecord& HitRecord) const
     HitRecord.V = B;
 
     return true;
+}
+
+double FQuad::PDFValue(const FPoint3& Origin, const FVector3& Direction) const
+{
+    FHitRecord HitRecord;
+    if (!this->Hit(FRay(Origin, Direction), FInterval(0.001, Infinity), HitRecord))
+    {
+        return 0;
+    }
+
+    auto Distance2 = HitRecord.T * HitRecord.T * Direction.Length2();
+    auto Cosine = fabs(Dot(Direction, HitRecord.Normal) / Direction.Length());
+
+    return Distance2 / (Cosine * Area);
+}
+
+FVector3 FQuad::Random(const FPoint3& Origin) const
+{
+    auto P = Q + (RandomDouble() * U) + (RandomDouble() * V);
+    return P - Origin;
 }
 
 std::shared_ptr<FHittableList> Box(const FPoint3& A, const FPoint3& B, std::shared_ptr<FMaterial> Material)

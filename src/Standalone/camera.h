@@ -9,7 +9,7 @@
 class FCamera
 {
 public:
-    void Render(const FHittable& World);
+    void Render(const FHittable& World, const FHittable& Lights);
     void SaveAsEXR(const std::string& Name);
     void SaveAsBMP(const std::string& Name);
 
@@ -28,7 +28,7 @@ public:
 private:
     void Initialize();
     FRay GetRay(uint32_t X, uint32_t Y, uint32_t SX, uint32_t SY);
-    FColor3 RayColor(const FRay& Ray, uint32_t Depth, const FHittable& World);
+    FColor3 RayColor(const FRay& Ray, uint32_t Depth, const FHittable& World, const FHittable& Lights);
     void WriteColor(const FColor3& PixelColor, uint32_t PixelIndex);
     double LinearToGamma(double Value) const;
 

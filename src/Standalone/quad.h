@@ -16,6 +16,10 @@ public:
 
     bool IsInterior(double A, double B, FHitRecord& HitRecord) const;
 
+    double PDFValue(const FPoint3& Origin, const FVector3& Direction) const override;
+
+    FVector3 Random(const FPoint3& Origin) const override;
+
 private:
     FPoint3 Q;
     FVector3 U;
@@ -25,6 +29,7 @@ private:
     FVector3 Normal;
     double D;
     FVector3 W;
+    double Area;
 };
 
 std::shared_ptr<FHittableList> Box(const FPoint3& A, const FPoint3& B, std::shared_ptr<FMaterial> Material);

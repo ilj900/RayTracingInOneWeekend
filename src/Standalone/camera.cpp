@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "material.h"
 #include "pdf.h"
+#include "hittable_list.h"
 
 #include <iostream>
 #include <thread>
@@ -12,7 +13,7 @@
 #include <mutex>
 #include <chrono>
 
-FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &World)
+FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &World, const FHittable& Lights)
 {
     if (Depth <= 0)
     {
@@ -36,12 +37,14 @@ FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &Worl
         return ColorFromEmission;
     }
 
-    FCosinePDF SurfacePDF(HitRecord.Normal);
-    Scattered = FRay(HitRecord.Position, SurfacePDF.Generate(), Ray.GetTime());
-    PDFValue = SurfacePDF.Value(Scattered.GetDirection());
+    FHittablePDF LightPDF(Lights, HitRecord.Position);
+    Scattered = FRay(HitRecord.Position, LightPDF.Generate(), Ray.GetTime());
+    PDFValue = LightPDF.Value(Scattered.GetDirection());
 
     double ScatteringPDF = HitRecord.Material->ScatteringPDF(Ray, HitRecord, Scattered);
-    FColor3 ColorFromScatter = (Attenuation * ScatteringPDF * RayColor(Scattered, Depth - 1, World)) / PDFValue;
+
+    FVector3 SampleColor = RayColor(Scattered, Depth - 1, World, Lights);
+    FColor3 ColorFromScatter = (Attenuation * ScatteringPDF * SampleColor) / PDFValue;
 
     return ColorFromEmission + ColorFromScatter;
 }
@@ -99,7 +102,7 @@ FRay FCamera::GetRay(uint32_t X, uint32_t Y, uint32_t SX, uint32_t SY)
     return Ray;
 }
 
-void FCamera::Render(const FHittable &World)
+void FCamera::Render(const FHittable &World, const FHittable& Lights)
 {
     Initialize();
 
@@ -123,7 +126,7 @@ void FCamera::Render(const FHittable &World)
                     for (uint32_t sj = 0; sj < SqrtSPP; sj++)
                     {
                         auto Ray = GetRay(j, Line, si, sj);
-                        FColor3 PixelColor = RayColor(Ray, MaxDepth, World);
+                        FColor3 PixelColor = RayColor(Ray, MaxDepth, World, Lights);
                         WriteColor(PixelColor, Line * ImageWidth + j);
                     }
                 }

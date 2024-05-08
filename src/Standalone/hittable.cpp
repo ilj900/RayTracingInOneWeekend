@@ -8,6 +8,16 @@ void FHitRecord::SetFaceNormal(const FRay& Ray, const FVector3& OutwardNormal)
     Normal = bFrontFace ? OutwardNormal : -OutwardNormal;
 }
 
+double FHittable::PDFValue(const FPoint3& Origin, const FVector3& Direction) const
+{
+    return 0.;
+}
+
+FVector3 FHittable::Random(const FPoint3& Origin) const
+{
+    return FVector3(1, 0, 0);
+}
+
 FTranslate::FTranslate(std::shared_ptr<FHittable> ObjectIn, const FVector3& OffsetIn) : Object(ObjectIn), Offset(OffsetIn)
 {
     BBox = Object->BoundingBox() + Offset;

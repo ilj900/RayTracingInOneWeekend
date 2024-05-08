@@ -41,3 +41,15 @@ FAABB FHittableList::BoundingBox() const
 {
     return BBox;
 }
+
+FHittablePDF::FHittablePDF(const FHittable& ObjectsIn, const FPoint3& OriginIn) : Objects(ObjectsIn), Origin(OriginIn) {};
+
+double FHittablePDF::Value(const FVector3 Direction) const
+{
+    return Objects.PDFValue(Origin, Direction);
+}
+
+FVector3 FHittablePDF::Generate() const
+{
+    return Objects.Random(Origin);
+}
