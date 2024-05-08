@@ -1,5 +1,6 @@
 #include "common_defines.h"
 #include "hittable.h"
+#include "onb.h"
 #include "rng.h"
 
 #include "material.h"
@@ -9,7 +10,7 @@ FColor3 FMaterial::Emit(double U, double V, const FPoint3& Point) const
     return FColor3(0, 0, 0);
 }
 
-bool FMaterial::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const
+bool FMaterial::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const
 {
     return false;
 };
@@ -23,20 +24,15 @@ FLambertian::FLambertian(const FColor3& AlbedoIn) : Texture(std::make_shared<FSo
 
 FLambertian::FLambertian(std::shared_ptr<FTexture> TextureIn) : Texture(TextureIn) {};
 
-bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const
+bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const
 {
-    FVector3 UnitVector = RandomUnitVectorOnHemisphere(HitRecord.Normal);
-    auto ScatterDirection = UnitVector;
-    ScatterDirection.Normalize();
+    FONB UVW;
+    UVW.BuildFrom(HitRecord.Normal);
+    auto ScatterDirection = UVW.Local(RandomCosineDirection());
 
-    if (ScatterDirection.NearZero())
-    {
-        ScatterDirection = HitRecord.Normal;
-    }
-
-    Scattered = FRay(HitRecord.Position, ScatterDirection, Ray.GetTime());
+    Scattered = FRay(HitRecord.Position, ScatterDirection.GetNormalized(), Ray.GetTime());
     Attenuation = Texture->Value(HitRecord.U, HitRecord.V, HitRecord.Position);
-
+    PDF = Dot(UVW[2], Scattered.GetDirection()) * M_PI_INV;
     return true;
 };
 
@@ -47,7 +43,7 @@ double FLambertian::ScatteringPDF(const FRay& Ray, const FHitRecord& HitRecord, 
 
 FMetal::FMetal(const FColor3& AlbedoIn, double FuzzIn) : Albedo(AlbedoIn), Fuzz(FuzzIn) {};
 
-bool FMetal::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const
+bool FMetal::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const
 {
     FVector3 Reflected = Reflect(Ray.GetDirection(), HitRecord.Normal);
     Reflected = Reflected.GetNormalized() + (Fuzz * RandomUnitVector());
@@ -59,7 +55,7 @@ bool FMetal::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Atte
 
 FDielectric::FDielectric(double RefractionIndexIn) : RefractionIndex(RefractionIndexIn) {};
 
-bool FDielectric::Scatter(const FRay &Ray, const FHitRecord &HitRecord, FColor3 &Attenuation, FRay &Scattered) const
+bool FDielectric::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const
 {
     Attenuation = {1, 1, 1};
     double RelativeRefractionIndex = HitRecord.bFrontFace ? (1 / RefractionIndex) : RefractionIndex;
@@ -105,11 +101,17 @@ FIsotropic::FIsotropic(const FColor3& Albedo) : Texture(std::make_shared<FSolidC
 
 FIsotropic::FIsotropic(std::shared_ptr<FTexture> TextureIn) : Texture(TextureIn) {};
 
-bool FIsotropic::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const
+bool FIsotropic::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const
 {
     Scattered = FRay(HitRecord.Position, RandomUnitVector(), HitRecord.T);
     Attenuation = Texture->Value(HitRecord.U, HitRecord.V, HitRecord.Position);
+    PDF = M_PI_INV * 0.25;
     return true;
+}
+
+double FIsotropic::ScatteringPDF(const FRay& Ray, const FHitRecord& HitRecord, const FRay& Scattered) const
+{
+    return M_PI_INV * 0.25;
 }
 
 

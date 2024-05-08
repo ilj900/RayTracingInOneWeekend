@@ -255,7 +255,7 @@ void CornellBox()
     FCamera Camera;
     Camera.AspectRatio = 1;
     Camera.ImageWidth = 1080;
-    Camera.SamplesPerPixel = 100;
+    Camera.SamplesPerPixel = 10;
     Camera.MaxDepth = 10;
     Camera.Background = {0., 0., 0.};
     Camera.VFOV = 40;
@@ -402,21 +402,6 @@ double PDF(const FVector3& D)
 
 int main()
 {
-    int N = 1000000;
-    auto Sum = 0.;
-    
-    for (int i = 0; i < N; ++i)
-    {
-        auto D = RandomCosineDirection();
-        Sum += F(D) / PDF(D);
-    }
-
-    std::cout << std::fixed << std::setprecision(12);
-    std::cout << "PI/2 = " << M_PI / 2. << "\n";
-    std::cout << "Estimate = " << Sum / N << std::endl;
-
-    return 0;
-
     switch (7)
     {
         case 1:
