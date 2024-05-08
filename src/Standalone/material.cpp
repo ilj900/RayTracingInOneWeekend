@@ -25,12 +25,7 @@ FLambertian::FLambertian(std::shared_ptr<FTexture> TextureIn) : Texture(TextureI
 
 bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered) const
 {
-    auto UnitVector = RandomUnitVector();
-    if(Dot(UnitVector, HitRecord.Normal) < 0)
-    {
-        UnitVector = -UnitVector;
-    }
-
+    FVector3 UnitVector = RandomUnitVectorOnHemisphere(HitRecord.Normal);
     auto ScatterDirection = UnitVector;
     ScatterDirection.Normalize();
 

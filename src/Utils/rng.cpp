@@ -117,4 +117,4 @@ FVector3 RandomInUnitDisc()
             return Candidate;
         }
     }
-}
+};

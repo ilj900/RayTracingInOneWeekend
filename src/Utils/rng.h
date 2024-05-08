@@ -3,7 +3,7 @@
 #include <tuple>
 #include <random>
 
-class FVector3;
+struct FVector3;
 
 class RNG1D
 {
