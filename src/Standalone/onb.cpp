@@ -10,7 +10,7 @@ FVector3 FONB::Local(const FVector3& A) const
     return A.X * U + A.Y * V + A.Z * W;
 }
 
-void FONB::BuildFrom(const FVector3& In)
+void FONB::BuildFromW(const FVector3& In)
 {
     FVector3 UnitW = In.GetNormalized();
     FVector3 A = (fabs(UnitW.X) > 0.9) ? FVector3(0, 1, 0) : FVector3(1, 0, 0);

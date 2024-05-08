@@ -5,7 +5,7 @@
 
 #include "material.h"
 
-FColor3 FMaterial::Emit(double U, double V, const FPoint3& Point) const
+FColor3 FMaterial::Emit(const FRay& Ray, const FHitRecord& HitRecord, double U, double V, const FPoint3& Point) const
 {
     return FColor3(0, 0, 0);
 }
@@ -27,7 +27,7 @@ FLambertian::FLambertian(std::shared_ptr<FTexture> TextureIn) : Texture(TextureI
 bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const
 {
     FONB UVW;
-    UVW.BuildFrom(HitRecord.Normal);
+    UVW.BuildFromW(HitRecord.Normal);
     auto ScatterDirection = UVW.Local(RandomCosineDirection());
 
     Scattered = FRay(HitRecord.Position, ScatterDirection.GetNormalized(), Ray.GetTime());
@@ -92,8 +92,12 @@ FDiffuseLight::FDiffuseLight(std::shared_ptr<FTexture> TextureIn) : Texture(Text
 
 FDiffuseLight::FDiffuseLight(const FColor3& EmissionColor) : Texture(std::make_shared<FSolidColor>(EmissionColor)) {};
 
-FColor3 FDiffuseLight::Emit(double U, double V, const FPoint3& Point) const
+FColor3 FDiffuseLight::Emit(const FRay& Ray, const FHitRecord& HitRecord, double U, double V, const FPoint3& Point) const
 {
+    if (!HitRecord.bFrontFace)
+    {
+        return {};
+    }
     return Texture->Value(U, V, Point);
 }
 

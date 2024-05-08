@@ -9,7 +9,7 @@ public:
 
     FVector3 Local(double A, double B, double C)const;
     FVector3 Local(const FVector3& A) const;
-    void BuildFrom(const FVector3& In);
+    void BuildFromW(const FVector3& In);
 
     FVector3 operator[](int i) const;
     FVector3& operator[](int i);

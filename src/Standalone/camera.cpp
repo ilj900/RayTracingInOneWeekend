@@ -28,7 +28,7 @@ FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &Worl
     FRay Scattered;
     FColor3 Attenuation;
     double PDF;
-    FColor3 ColorFromEmission = HitRecord.Material->Emit(HitRecord.U, HitRecord.V, HitRecord.Position);
+    FColor3 ColorFromEmission = HitRecord.Material->Emit(Ray, HitRecord, HitRecord.U, HitRecord.V, HitRecord.Position);
 
     if (!HitRecord.Material->Scatter(Ray, HitRecord, Attenuation, Scattered, PDF))
     {
@@ -51,6 +51,9 @@ FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &Worl
     {
         return ColorFromEmission;
     }
+
+    PDF = Distance2 / (LightCos * LightArea);
+    Scattered = FRay(HitRecord.Position, ToLight, Ray.GetTime());
 
     double ScatteringPDF = HitRecord.Material->ScatteringPDF(Ray, HitRecord, Scattered);
 
