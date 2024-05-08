@@ -7,6 +7,11 @@
 #include "sphere.h"
 #include "texture.h"
 
+#include "common_defines.h"
+
+#include <iostream>
+#include <iomanip>
+
 void BouncingSpheres()
 {
     FHittableList World;
@@ -384,8 +389,34 @@ void FinalScene(int ImageWidth, int SamplesPerPixel, int MaxDepth)
     Camera.SaveAsEXR("Result.exr");
 }
 
+double F(const FVector3& D)
+{
+    auto CosTheta = D.Z;
+    return CosTheta * CosTheta * CosTheta;
+}
+
+double PDF(const FVector3& D)
+{
+    return D.Z * M_PI_INV;
+}
+
 int main()
 {
+    int N = 1000000;
+    auto Sum = 0.;
+    
+    for (int i = 0; i < N; ++i)
+    {
+        auto D = RandomCosineDirection();
+        Sum += F(D) / PDF(D);
+    }
+
+    std::cout << std::fixed << std::setprecision(12);
+    std::cout << "PI/2 = " << M_PI / 2. << "\n";
+    std::cout << "Estimate = " << Sum / N << std::endl;
+
+    return 0;
+
     switch (7)
     {
         case 1:

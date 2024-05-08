@@ -118,3 +118,16 @@ FVector3 RandomInUnitDisc()
         }
     }
 };
+
+FVector3 RandomCosineDirection()
+{
+    auto R1 = RandomDouble();
+    auto R2 = RandomDouble();
+
+    auto Phi = 2 * 3.141592653589 * R1;
+    auto X = cos(Phi) * sqrt(R2);
+    auto Y = sin(Phi) * sqrt(R2);
+    auto Z = sqrt(1- R2);
+
+    return {X, Y, Z};
+}

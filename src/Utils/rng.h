@@ -57,3 +57,4 @@ FVector3 RandomVectorInUnitSphere();
 FVector3 RandomUnitVector();
 FVector3 RandomUnitVectorOnHemisphere(const FVector3& Normal);
 FVector3 RandomInUnitDisc();
+FVector3 RandomCosineDirection();
