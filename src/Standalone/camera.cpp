@@ -32,14 +32,12 @@ FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &Worl
     double PDFValue;
     FColor3 ColorFromEmission = HitRecord.Material->Emit(Ray, HitRecord, HitRecord.U, HitRecord.V, HitRecord.Position);
 
-    if (!HitRecord.Material->Scatter(Ray, HitRecord, Attenuation, Scattered, PDFValue))
-    {
-        return ColorFromEmission;
-    }
+    auto P0 = std::make_shared<FHittablePDF>(Lights, HitRecord.Position);
+    auto P1 = std::make_shared<FCosinePDF>(HitRecord.Normal);
+    FMixturePDF MixedPDF(P0, P1);
 
-    FHittablePDF LightPDF(Lights, HitRecord.Position);
-    Scattered = FRay(HitRecord.Position, LightPDF.Generate(), Ray.GetTime());
-    PDFValue = LightPDF.Value(Scattered.GetDirection());
+    Scattered = FRay(HitRecord.Position, MixedPDF.Generate(), Ray.GetTime());
+    PDFValue = MixedPDF.Value(Scattered.GetDirection());
 
     double ScatteringPDF = HitRecord.Material->ScatteringPDF(Ray, HitRecord, Scattered);
 

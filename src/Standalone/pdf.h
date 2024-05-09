@@ -31,3 +31,15 @@ public:
 private:
     FONB UVW;
 };
+
+class FMixturePDF : public FPDF
+{
+public:
+    FMixturePDF(std::shared_ptr<FPDF> P0, std::shared_ptr<FPDF> P1);
+
+    double Value(const FVector3 Direction) const override;
+    FVector3 Generate() const override;
+
+private:
+    std::shared_ptr<FPDF> P[2];
+};
