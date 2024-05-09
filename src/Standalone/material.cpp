@@ -1,6 +1,5 @@
 #include "common_defines.h"
 #include "hittable.h"
-#include "onb.h"
 #include "rng.h"
 
 #include "material.h"
