@@ -10,7 +10,7 @@ FColor3 FMaterial::Emit(const FRay& Ray, const FHitRecord& HitRecord, double U, 
     return FColor3(0, 0, 0);
 }
 
-bool FMaterial::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord ScatterRecord) const
+bool FMaterial::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord& ScatterRecord) const
 {
     return false;
 };
@@ -24,7 +24,7 @@ FLambertian::FLambertian(const FColor3& AlbedoIn) : Texture(std::make_shared<FSo
 
 FLambertian::FLambertian(std::shared_ptr<FTexture> TextureIn) : Texture(TextureIn) {};
 
-bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord ScatterRecord) const
+bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord& ScatterRecord) const
 {
     ScatterRecord.Attenuation = Texture->Value(HitRecord.U, HitRecord.V, HitRecord.Position);
     ScatterRecord.PDFPtr = std::make_shared<FCosinePDF>(HitRecord.Normal);
@@ -39,7 +39,7 @@ double FLambertian::ScatteringPDF(const FRay& Ray, const FHitRecord& HitRecord, 
 
 FMetal::FMetal(const FColor3& AlbedoIn, double FuzzIn) : Albedo(AlbedoIn), Fuzz(FuzzIn) {};
 
-bool FMetal::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord ScatterRecord) const
+bool FMetal::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord& ScatterRecord) const
 {
     FVector3 Reflected = Reflect(Ray.GetDirection(), HitRecord.Normal);
     Reflected = Reflected.GetNormalized() + (Fuzz * RandomUnitVector());
@@ -54,7 +54,7 @@ bool FMetal::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecor
 
 FDielectric::FDielectric(double RefractionIndexIn) : RefractionIndex(RefractionIndexIn) {};
 
-bool FDielectric::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord ScatterRecord) const
+bool FDielectric::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord& ScatterRecord) const
 {
     ScatterRecord.Attenuation = {1, 1, 1};
     ScatterRecord.PDFPtr = nullptr;
@@ -106,7 +106,7 @@ FIsotropic::FIsotropic(const FColor3& Albedo) : Texture(std::make_shared<FSolidC
 
 FIsotropic::FIsotropic(std::shared_ptr<FTexture> TextureIn) : Texture(TextureIn) {};
 
-bool FIsotropic::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord ScatterRecord) const
+bool FIsotropic::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord& ScatterRecord) const
 {
     ScatterRecord.Attenuation = Texture->Value(HitRecord.U, HitRecord.V, HitRecord.Position);
     ScatterRecord.PDFPtr = std::make_shared<FSpherePDF>();

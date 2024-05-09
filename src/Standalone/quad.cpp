@@ -10,7 +10,7 @@ FQuad::FQuad(const FPoint3& QIn, const FVector3 UIn, const FVector3 VIn, std::sh
     D = Dot(Normal, Q);
     W = N / Dot(N, N);
 
-    Area = N.Length2();
+    Area = N.Length();
 
     SetBoundingBox();
 };
@@ -81,6 +81,7 @@ bool FQuad::IsInterior(double A, double B, FHitRecord& HitRecord) const
 double FQuad::PDFValue(const FPoint3& Origin, const FVector3& Direction) const
 {
     FHitRecord HitRecord;
+
     if (!this->Hit(FRay(Origin, Direction), FInterval(0.001, Infinity), HitRecord))
     {
         return 0;
