@@ -1,4 +1,6 @@
 #include "common_defines.h"
+#include "onb.h"
+#include "rng.h"
 
 #include "sphere.h"
 
@@ -64,12 +66,50 @@ FAABB FSphere::BoundingBox() const
     return BBox;
 }
 
+double FSphere::PDFValue(const FPoint3& Origin, const FVector3& Direction) const
+{
+    FHitRecord HitRecord;
+
+    if (!this->Hit(FRay(Origin, Direction), FInterval(0.001, Infinity), HitRecord))
+    {
+        return 0;
+    }
+
+    auto CosThetaMax = sqrt(1 - Radius * Radius / (Center1 - Origin).Length2());
+    auto SolidAngle = 2 * M_PI * (1 - CosThetaMax);
+
+    return 1 / SolidAngle;
+}
+
+FVector3 FSphere::Random(const FPoint3& Origin) const
+{
+    FVector3 Direction = Center1 - Origin;
+    auto Distance2 = Direction.Length2();
+
+    FONB UVW;
+    UVW.BuildFromW(Direction);
+    return UVW.Local(RandomToSphere(Radius, Distance2));
+}
+
 std::tuple<double, double> FSphere::GetSphereUV(const FPoint3& Point)
 {
     auto Theta = acos(-Point.Y);
     auto Phi = atan2(-Point.Z, Point.X) + M_PI;
 
     return std::make_tuple(Phi * M_PI_INV * 0.5, Theta * M_PI_INV);
+}
+
+FVector3 FSphere::RandomToSphere(double Radius, double Distance2)
+{
+    auto R1 = RandomDouble();
+    auto R2 = RandomDouble();
+    auto Z = 1 + R2 * (sqrt(1 - Radius * Radius / Distance2) - 1);
+
+    auto Phi = 2 * M_PI * R1;
+    auto X = cos(Phi) * sqrt(1 - Z * Z);
+    auto Y = sin(Phi) * sqrt(1 - Z * Z);
+
+    return FVector3(X, Y ,Z);
 }
 
 FPoint3 FSphere::SphereCenter(double Time) const

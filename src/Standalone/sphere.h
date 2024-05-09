@@ -11,7 +11,13 @@ public:
     bool Hit(const FRay& Ray, FInterval Interval, FHitRecord& HitRecordOut) const override;
     FAABB BoundingBox() const override;
 
+    double PDFValue(const FPoint3& Origin, const FVector3& Direction) const override;
+
+    FVector3 Random(const FPoint3& Origin) const override;
+
     static std::tuple<double, double> GetSphereUV(const FPoint3& Point);
+
+    static FVector3 RandomToSphere(double Radius, double Distance2);
 
 private:
     FPoint3 SphereCenter(double Time) const;

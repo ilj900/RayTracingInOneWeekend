@@ -1,4 +1,5 @@
 #include "interval.h"
+#include "rng.h"
 
 #include "hittable_list.h"
 
@@ -40,6 +41,26 @@ bool FHittableList::Hit(const FRay& Ray, FInterval Interval, FHitRecord& HitReco
 FAABB FHittableList::BoundingBox() const
 {
     return BBox;
+}
+
+double FHittableList::PDFValue(const FPoint3& Origin, const FVector3& Direction) const
+{
+    auto Weight = 1. / Hittables.size();
+    auto Sum = 0.;
+
+    for (const auto& Hittable : Hittables)
+    {
+        Sum += Weight * Hittable->PDFValue(Origin, Direction);
+    }
+
+    return Sum;
+}
+
+FVector3 FHittableList::Random(const FPoint3& Origin) const
+{
+    auto IntSize = int(Hittables.size());
+
+    return Hittables[RandomInt(0, IntSize - 1)]->Random(Origin);
 }
 
 FHittablePDF::FHittablePDF(const FHittable& ObjectsIn, const FPoint3& OriginIn) : Objects(ObjectsIn), Origin(OriginIn) {};

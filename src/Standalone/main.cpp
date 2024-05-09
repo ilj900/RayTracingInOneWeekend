@@ -246,7 +246,8 @@ void CornellBox()
     auto M = std::shared_ptr<FMaterial>();
     Lights.Add(std::make_shared<FQuad>(FPoint3(343, 554, 332), FVector3(-130, 0, 0), FVector3(0, 0, -105), M));
 
-    std::shared_ptr<FHittable> Box1 = Box(FPoint3(0, 0, 0), FPoint3(165, 330, 165), White);
+    std::shared_ptr<FMaterial> Aluminum = std::make_shared<FMetal>(FColor3(0.8, 0.85, 0.88), 0.);
+    std::shared_ptr<FHittable> Box1 = Box(FPoint3(0, 0, 0), FPoint3(165, 330, 165), Aluminum);
     Box1 = std::make_shared<FRotateY>(Box1, 15);
     Box1 = std::make_shared<FTranslate>(Box1, FVector3(265, 0, 295));
     World.Add(Box1);

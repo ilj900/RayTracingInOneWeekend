@@ -10,7 +10,7 @@ FColor3 FMaterial::Emit(const FRay& Ray, const FHitRecord& HitRecord, double U, 
     return FColor3(0, 0, 0);
 }
 
-bool FMaterial::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const
+bool FMaterial::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord ScatterRecord) const
 {
     return false;
 };
@@ -24,15 +24,11 @@ FLambertian::FLambertian(const FColor3& AlbedoIn) : Texture(std::make_shared<FSo
 
 FLambertian::FLambertian(std::shared_ptr<FTexture> TextureIn) : Texture(TextureIn) {};
 
-bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const
+bool FLambertian::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord ScatterRecord) const
 {
-    FONB UVW;
-    UVW.BuildFromW(HitRecord.Normal);
-    auto ScatterDirection = UVW.Local(RandomCosineDirection());
-
-    Scattered = FRay(HitRecord.Position, ScatterDirection.GetNormalized(), Ray.GetTime());
-    Attenuation = Texture->Value(HitRecord.U, HitRecord.V, HitRecord.Position);
-    PDF = Dot(UVW[2], Scattered.GetDirection()) * M_PI_INV;
+    ScatterRecord.Attenuation = Texture->Value(HitRecord.U, HitRecord.V, HitRecord.Position);
+    ScatterRecord.PDFPtr = std::make_shared<FCosinePDF>(HitRecord.Normal);
+    ScatterRecord.bSkipPDF = false;
     return true;
 };
 
@@ -43,21 +39,26 @@ double FLambertian::ScatteringPDF(const FRay& Ray, const FHitRecord& HitRecord, 
 
 FMetal::FMetal(const FColor3& AlbedoIn, double FuzzIn) : Albedo(AlbedoIn), Fuzz(FuzzIn) {};
 
-bool FMetal::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const
+bool FMetal::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord ScatterRecord) const
 {
     FVector3 Reflected = Reflect(Ray.GetDirection(), HitRecord.Normal);
     Reflected = Reflected.GetNormalized() + (Fuzz * RandomUnitVector());
-    Scattered = FRay(HitRecord.Position, Reflected, Ray.GetTime());
-    Attenuation = Albedo;
 
-    return Dot(Scattered.GetDirection(), HitRecord.Normal) > 0;
+    ScatterRecord.Attenuation = Albedo;
+    ScatterRecord.PDFPtr = nullptr;
+    ScatterRecord.bSkipPDF = true;
+    ScatterRecord.SkipPDFRay = FRay(HitRecord.Position, Reflected, Ray.GetTime());
+
+    return true;
 };
 
 FDielectric::FDielectric(double RefractionIndexIn) : RefractionIndex(RefractionIndexIn) {};
 
-bool FDielectric::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const
+bool FDielectric::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord ScatterRecord) const
 {
-    Attenuation = {1, 1, 1};
+    ScatterRecord.Attenuation = {1, 1, 1};
+    ScatterRecord.PDFPtr = nullptr;
+    ScatterRecord.bSkipPDF = true;
     double RelativeRefractionIndex = HitRecord.bFrontFace ? (1 / RefractionIndex) : RefractionIndex;
     auto NormalizedRayDirection = Ray.GetDirection().GetNormalized();
 
@@ -76,7 +77,7 @@ bool FDielectric::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3&
         Direction = Refract(NormalizedRayDirection, HitRecord.Normal, RelativeRefractionIndex);
     }
 
-    Scattered = {HitRecord.Position, Direction, Ray.GetTime()};
+    ScatterRecord.SkipPDFRay = {HitRecord.Position, Direction, Ray.GetTime()};
 
     return true;
 };
@@ -105,11 +106,11 @@ FIsotropic::FIsotropic(const FColor3& Albedo) : Texture(std::make_shared<FSolidC
 
 FIsotropic::FIsotropic(std::shared_ptr<FTexture> TextureIn) : Texture(TextureIn) {};
 
-bool FIsotropic::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const
+bool FIsotropic::Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord ScatterRecord) const
 {
-    Scattered = FRay(HitRecord.Position, RandomUnitVector(), HitRecord.T);
-    Attenuation = Texture->Value(HitRecord.U, HitRecord.V, HitRecord.Position);
-    PDF = M_PI_INV * 0.25;
+    ScatterRecord.Attenuation = Texture->Value(HitRecord.U, HitRecord.V, HitRecord.Position);
+    ScatterRecord.PDFPtr = std::make_shared<FSpherePDF>();
+    ScatterRecord.bSkipPDF = false;
     return true;
 }
 

@@ -22,6 +22,10 @@ public:
 
     FAABB BoundingBox() const override;
 
+    double PDFValue(const FPoint3& Origin, const FVector3& Direction) const override;
+
+    FVector3 Random(const FPoint3& Origin) const override;
+
 private:
     FAABB BBox;
 };

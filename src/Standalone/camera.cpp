@@ -27,22 +27,29 @@ FColor3 FCamera::RayColor(const FRay &Ray, uint32_t Depth, const FHittable &Worl
         return Background;
     }
 
-    FRay Scattered;
-    FColor3 Attenuation;
-    double PDFValue;
+    FScatterRecord ScatterRecord;
     FColor3 ColorFromEmission = HitRecord.Material->Emit(Ray, HitRecord, HitRecord.U, HitRecord.V, HitRecord.Position);
 
-    auto P0 = std::make_shared<FHittablePDF>(Lights, HitRecord.Position);
-    auto P1 = std::make_shared<FCosinePDF>(HitRecord.Normal);
-    FMixturePDF MixedPDF(P0, P1);
+    if (!HitRecord.Material->Scatter(Ray, HitRecord, ScatterRecord))
+    {
+        return ColorFromEmission;
+    }
 
-    Scattered = FRay(HitRecord.Position, MixedPDF.Generate(), Ray.GetTime());
-    PDFValue = MixedPDF.Value(Scattered.GetDirection());
+    if (ScatterRecord.bSkipPDF)
+    {
+        return ScatterRecord.Attenuation * RayColor(ScatterRecord.SkipPDFRay, Depth - 1, World, Lights);
+    }
+
+    auto LightPtr = std::make_shared<FHittablePDF>(Lights, HitRecord.Position);
+    FMixturePDF P(LightPtr, ScatterRecord.PDFPtr);
+
+    FRay Scattered = FRay(HitRecord.Position, P.Generate(), Ray.GetTime());
+    auto PDFValue = P.Value(Scattered.GetDirection());
 
     double ScatteringPDF = HitRecord.Material->ScatteringPDF(Ray, HitRecord, Scattered);
 
     FVector3 SampleColor = RayColor(Scattered, Depth - 1, World, Lights);
-    FColor3 ColorFromScatter = (Attenuation * ScatteringPDF * SampleColor) / PDFValue;
+    FColor3 ColorFromScatter = (ScatterRecord.Attenuation * ScatteringPDF * SampleColor) / PDFValue;
 
     return ColorFromEmission + ColorFromScatter;
 }
@@ -132,7 +139,7 @@ void FCamera::Render(const FHittable &World, const FHittable& Lights)
         }
     };
 
-    uint32_t ThreadsCount = std::thread::hardware_concurrency();
+    uint32_t ThreadsCount = 1;//std::thread::hardware_concurrency();
 
     std::vector<std::vector<uint32_t>> LinesByThread(ThreadsCount);
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pdf.h"
 #include "color3.h"
 
 #include "texture.h"
@@ -7,13 +8,22 @@
 class FRay;
 class FHitRecord;
 
+class FScatterRecord
+{
+public:
+    FColor3 Attenuation;
+    std::shared_ptr<FPDF> PDFPtr;
+    bool bSkipPDF;
+    FRay SkipPDFRay;
+};
+
 class FMaterial
 {
 public:
     virtual ~FMaterial() = default;
 
     virtual FColor3 Emit(const FRay& Ray, const FHitRecord& HitRecord, double U, double V, const FPoint3& Point) const;
-    virtual bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const;
+    virtual bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord ScatterRecord) const;
     virtual double ScatteringPDF(const FRay& Ray, const FHitRecord& HitRecord, const FRay& Scattered) const;
 };
 
@@ -22,7 +32,7 @@ class FLambertian : public FMaterial
 public:
     FLambertian(const FColor3& AlbedoIn);
     FLambertian(std::shared_ptr<FTexture> TextureIn);
-    bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const override;
+    bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord ScatterRecord) const override;
     double ScatteringPDF(const FRay& Ray, const FHitRecord& HitRecord, const FRay& Scattered) const override;
 
 private:
@@ -33,7 +43,7 @@ class FMetal : public FMaterial
 {
 public:
     FMetal(const FColor3& AlbedoIn, double FuzzIn);
-    bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const override;
+    bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord ScatterRecord) const override;
 
 private:
     FColor3 Albedo;
@@ -44,7 +54,7 @@ class FDielectric : public FMaterial
 {
 public:
     FDielectric(double RefractionIndexIn);
-    bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const override;
+    bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord ScatterRecord) const override;
 
 private:
     double RefractionIndex;
@@ -70,7 +80,7 @@ public:
     FIsotropic(const FColor3& Albedo);
     FIsotropic(std::shared_ptr<FTexture> TextureIn);
 
-    bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FColor3& Attenuation, FRay& Scattered, double& PDF) const override;
+    bool Scatter(const FRay& Ray, const FHitRecord& HitRecord, FScatterRecord ScatterRecord) const override;
     double ScatteringPDF(const FRay& Ray, const FHitRecord& HitRecord, const FRay& Scattered) const override;
 
 private:
