@@ -139,7 +139,7 @@ void FCamera::Render(const FHittable &World, const FHittable& Lights)
         }
     };
 
-    uint32_t ThreadsCount = 1;//std::thread::hardware_concurrency();
+    uint32_t ThreadsCount = std::thread::hardware_concurrency();
 
     std::vector<std::vector<uint32_t>> LinesByThread(ThreadsCount);
 

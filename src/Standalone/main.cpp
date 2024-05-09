@@ -260,7 +260,7 @@ void CornellBox()
     FCamera Camera;
     Camera.AspectRatio = 1;
     Camera.ImageWidth = 1080;
-    Camera.SamplesPerPixel = 10;
+    Camera.SamplesPerPixel = 200;
     Camera.MaxDepth = 10;
     Camera.Background = {0., 0., 0.};
     Camera.VFOV = 40;
