@@ -78,13 +78,6 @@ void FEstimator::DoEstimate()
             double GiniY = ((MaxValue[PixelIndex * 3 + 1] * TotalSumW) * 0.5 - TotalSumY) / ((MaxValue[PixelIndex * 3 + 1] * TotalSumW) * 0.5);
             double GiniZ = ((MaxValue[PixelIndex * 3 + 2] * TotalSumW) * 0.5 - TotalSumZ) / ((MaxValue[PixelIndex * 3 + 2] * TotalSumW) * 0.5);
 
-            bool bGini = false;
-
-            if (GiniX > Threshold || GiniY > Threshold || GiniZ > Threshold)
-            {
-                bGini = true;
-            }
-
             std::vector<double> ValuesX(BucketsCount);
             std::vector<double> ValuesY(BucketsCount);
             std::vector<double> ValuesZ(BucketsCount);
@@ -96,20 +89,34 @@ void FEstimator::DoEstimate()
                 ValuesZ[i] = UnestimatedImageData[i][PixelIndex * 4 + 2] / UnestimatedImageData[i][PixelIndex * 4 + 3];
             }
 
-            if (bGini)
+            if (GiniX)
             {
                 std::sort(ValuesX.begin(), ValuesX.end());
-                std::sort(ValuesY.begin(), ValuesY.end());
-                std::sort(ValuesZ.begin(), ValuesZ.end());
-
                 EstimatedImageData[PixelIndex * 3] = float(LinearToGamma(ValuesX[BucketsCount / 2]));
-                EstimatedImageData[PixelIndex * 3 + 1] = float(LinearToGamma(ValuesY[BucketsCount / 2]));
-                EstimatedImageData[PixelIndex * 3 + 2] = float(LinearToGamma(ValuesZ[BucketsCount / 2]));
             }
             else
             {
                 EstimatedImageData[PixelIndex * 3] = float(LinearToGamma(TotalSumX / TotalSumW));
+
+            }
+
+            if (GiniY)
+            {
+                std::sort(ValuesY.begin(), ValuesY.end());
+                EstimatedImageData[PixelIndex * 3 + 1] = float(LinearToGamma(ValuesY[BucketsCount / 2]));
+            }
+            else
+            {
                 EstimatedImageData[PixelIndex * 3 + 1] = float(LinearToGamma(TotalSumY / TotalSumW));
+            }
+
+            if (GiniZ)
+            {
+                std::sort(ValuesZ.begin(), ValuesZ.end());
+                EstimatedImageData[PixelIndex * 3 + 2] = float(LinearToGamma(ValuesZ[BucketsCount / 2]));
+            }
+            else
+            {
                 EstimatedImageData[PixelIndex * 3 + 2] = float(LinearToGamma(TotalSumZ / TotalSumW));
             }
         }
