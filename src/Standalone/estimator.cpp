@@ -1,6 +1,8 @@
 #include "stb_image_write.h"
 #include "tinyexr.h"
 
+#include "interval.h"
+
 #include "estimator.h"
 
 #include <algorithm>
@@ -14,12 +16,13 @@ FEstimator::FEstimator(uint32_t WidthIn, uint32_t HeightIn, uint32_t BucketsCoun
     }
 
     Counter.resize(Width * Height);
-    ImagesData.resize(BucketsCount);
+    UnestimatedImageData.resize(BucketsCount);
+    EstimatedImageData.resize(Width * Height * 3);
     MaxValue.resize(Width * Height * 3, 0.);
 
     for (uint32_t i = 0; i < BucketsCount; ++i)
     {
-        ImagesData[i].resize(Width * Height * 4); /// Four components per pixel
+        UnestimatedImageData[i].resize(Width * Height * 4); /// Four components per pixel
     }
 }
 
@@ -42,18 +45,16 @@ void FEstimator::Store(int X, int Y, const FColor3 & Value)
         MaxValue[PixelIndex * 3 + 2] = Value.Z;
     }
 
-    ImagesData[Counter[PixelIndex]][PixelIndex * 4] += Value.X;
-    ImagesData[Counter[PixelIndex]][PixelIndex * 4 + 1] += Value.Y;
-    ImagesData[Counter[PixelIndex]][PixelIndex * 4 + 2] += Value.Z;
-    ImagesData[Counter[PixelIndex]][PixelIndex * 4 + 3] += 1.;
+    UnestimatedImageData[Counter[PixelIndex]][PixelIndex * 4] += Value.X;
+    UnestimatedImageData[Counter[PixelIndex]][PixelIndex * 4 + 1] += Value.Y;
+    UnestimatedImageData[Counter[PixelIndex]][PixelIndex * 4 + 2] += Value.Z;
+    UnestimatedImageData[Counter[PixelIndex]][PixelIndex * 4 + 3] += 1.;
 
     Counter[PixelIndex] = (Counter[PixelIndex] + 1) % BucketsCount;
 }
 
-void FEstimator::SaveAsEXR(const std::string& Name)
+void FEstimator::DoEstimate()
 {
-    std::vector<float> ImageDataEstimated(Width * Height * 3);
-
     for (uint32_t y = 0; y < Height; ++y)
     {
         for (uint32_t x = 0; x < Width; ++x)
@@ -67,10 +68,10 @@ void FEstimator::SaveAsEXR(const std::string& Name)
 
             for (uint32_t i = 0; i < BucketsCount; ++i)
             {
-                TotalSumX += ImagesData[i][PixelIndex * 4];
-                TotalSumY += ImagesData[i][PixelIndex * 4 + 1];
-                TotalSumZ += ImagesData[i][PixelIndex * 4 + 2];
-                TotalSumW += ImagesData[i][PixelIndex * 4 + 3];
+                TotalSumX += UnestimatedImageData[i][PixelIndex * 4];
+                TotalSumY += UnestimatedImageData[i][PixelIndex * 4 + 1];
+                TotalSumZ += UnestimatedImageData[i][PixelIndex * 4 + 2];
+                TotalSumW += UnestimatedImageData[i][PixelIndex * 4 + 3];
             }
 
             double GiniX = ((MaxValue[PixelIndex * 3] * TotalSumW) * 0.5 - TotalSumX) / ((MaxValue[PixelIndex * 3] * TotalSumW) * 0.5);
@@ -90,9 +91,9 @@ void FEstimator::SaveAsEXR(const std::string& Name)
 
             for (uint32_t i = 0; i < BucketsCount; ++i)
             {
-                ValuesX[i] = ImagesData[i][PixelIndex * 4] / ImagesData[i][PixelIndex * 4 + 3];
-                ValuesY[i] = ImagesData[i][PixelIndex * 4 + 1] / ImagesData[i][PixelIndex * 4 + 3];
-                ValuesZ[i] = ImagesData[i][PixelIndex * 4 + 2] / ImagesData[i][PixelIndex * 4 + 3];
+                ValuesX[i] = UnestimatedImageData[i][PixelIndex * 4] / UnestimatedImageData[i][PixelIndex * 4 + 3];
+                ValuesY[i] = UnestimatedImageData[i][PixelIndex * 4 + 1] / UnestimatedImageData[i][PixelIndex * 4 + 3];
+                ValuesZ[i] = UnestimatedImageData[i][PixelIndex * 4 + 2] / UnestimatedImageData[i][PixelIndex * 4 + 3];
             }
 
             if (bGini)
@@ -101,37 +102,39 @@ void FEstimator::SaveAsEXR(const std::string& Name)
                 std::sort(ValuesY.begin(), ValuesY.end());
                 std::sort(ValuesZ.begin(), ValuesZ.end());
 
-                ImageDataEstimated[PixelIndex * 3] = float(ValuesX[BucketsCount / 2]);
-                ImageDataEstimated[PixelIndex * 3 + 1] = float(ValuesY[BucketsCount / 2]);
-                ImageDataEstimated[PixelIndex * 3 + 2] = float(ValuesZ[BucketsCount / 2]);
+                EstimatedImageData[PixelIndex * 3] = float(LinearToGamma(ValuesX[BucketsCount / 2]));
+                EstimatedImageData[PixelIndex * 3 + 1] = float(LinearToGamma(ValuesY[BucketsCount / 2]));
+                EstimatedImageData[PixelIndex * 3 + 2] = float(LinearToGamma(ValuesZ[BucketsCount / 2]));
             }
             else
             {
-                ImageDataEstimated[PixelIndex * 3] = float(TotalSumX / TotalSumW);
-                ImageDataEstimated[PixelIndex * 3 + 1] = float(TotalSumY / TotalSumW);
-                ImageDataEstimated[PixelIndex * 3 + 2] = float(TotalSumZ / TotalSumW);
+                EstimatedImageData[PixelIndex * 3] = float(LinearToGamma(TotalSumX / TotalSumW));
+                EstimatedImageData[PixelIndex * 3 + 1] = float(LinearToGamma(TotalSumY / TotalSumW));
+                EstimatedImageData[PixelIndex * 3 + 2] = float(LinearToGamma(TotalSumZ / TotalSumW));
             }
         }
     }
+}
 
+void FEstimator::SaveAsEXR(const std::string& Name)
+{
     const char* Err = nullptr;
-    SaveEXR(ImageDataEstimated.data(), Width, Height, 3, false, Name.c_str(), &Err);
+    SaveEXR(EstimatedImageData.data(), Width, Height, 3, false, Name.c_str(), &Err);
 }
 
 void FEstimator::SaveAsBMP(const std::string& Name)
 {
-//    std::vector<unsigned char> EstimatedUnsignedCharImageData(ImageWidth * ImageHeight * 3);
-//    static const FInterval Intensity(0, 0.999f);
-//
-//    for (uint32_t i = 0; i < ImageWidth * ImageHeight; ++i)
-//    {
-//        double InverseAccumulated = 1 / ImageData[i * 4 + 3];
-//        EstimatedUnsignedCharImageData[i * 3] = 256 * Intensity.Clamp(LinearToGamma(ImageData[i * 4] * InverseAccumulated));
-//        EstimatedUnsignedCharImageData[i * 3 + 1] = 256 * Intensity.Clamp(LinearToGamma(ImageData[i * 4 + 1] * InverseAccumulated));
-//        EstimatedUnsignedCharImageData[i * 3 + 2] = 256 * Intensity.Clamp(LinearToGamma(ImageData[i * 4 + 2] * InverseAccumulated));
-//    }
-//
-//    stbi_write_bmp(Name.c_str(), ImageWidth, ImageHeight, 3, EstimatedUnsignedCharImageData.data());
+    std::vector<unsigned char> EstimatedUnsignedCharImageData(Width * Height * 3);
+    static const FInterval Intensity(0, 0.999f);
+
+    for (uint32_t i = 0; i < Width * Height; ++i)
+    {
+        EstimatedUnsignedCharImageData[i * 3] = 256 * Intensity.Clamp(LinearToGamma(EstimatedImageData[i * 3]));
+        EstimatedUnsignedCharImageData[i * 3 + 1] = 256 * Intensity.Clamp(LinearToGamma(EstimatedImageData[i * 3 + 1]));
+        EstimatedUnsignedCharImageData[i * 3 + 2] = 256 * Intensity.Clamp(LinearToGamma(EstimatedImageData[i * 3 + 2]));
+    }
+
+    stbi_write_bmp(Name.c_str(), Width, Height, 3, EstimatedUnsignedCharImageData.data());
 }
 
 double FEstimator::LinearToGamma(double Value) const

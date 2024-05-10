@@ -137,7 +137,7 @@ void FCamera::Render(const FHittable &World, const FHittable& Lights)
         }
     };
 
-    uint32_t ThreadsCount = 1;
+    uint32_t ThreadsCount = std::thread::hardware_concurrency();
 
     std::vector<std::vector<uint32_t>> LinesByThread(ThreadsCount);
 
@@ -167,10 +167,12 @@ void FCamera::Render(const FHittable &World, const FHittable& Lights)
 
 void FCamera::SaveAsEXR(const std::string& Name)
 {
+    Estimator->DoEstimate();
     Estimator->SaveAsEXR(Name);
 }
 
 void FCamera::SaveAsBMP(const std::string& Name)
 {
+    Estimator->DoEstimate();
     Estimator->SaveAsBMP(Name);
 }

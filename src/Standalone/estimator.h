@@ -9,6 +9,7 @@ class FEstimator
 public:
     FEstimator(uint32_t WidthIn, uint32_t HeightIn, uint32_t BucketsCountIn, double ThresholdIn);
     void Store(int X, int Y, const FColor3 & Value);
+    void DoEstimate();
     void SaveAsEXR(const std::string& Name);
     void SaveAsBMP(const std::string& Name);
 
@@ -21,7 +22,8 @@ private:
     double Threshold = 0.25;
 
     std::vector<uint32_t> Counter;
-    std::vector<std::vector<double>> ImagesData;
+    std::vector<std::vector<double>> UnestimatedImageData;
     std::vector<double> MaxValue;
+    std::vector<float> EstimatedImageData;
 };
 
