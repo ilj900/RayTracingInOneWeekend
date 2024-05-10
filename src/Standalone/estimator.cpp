@@ -73,9 +73,9 @@ void FEstimator::SaveAsEXR(const std::string& Name)
                 TotalSumW += ImagesData[i][PixelIndex * 4 + 3];
             }
 
-            double GiniX = (MaxValue[PixelIndex * 3] * TotalSumW - TotalSumX) / (MaxValue[PixelIndex * 3] * TotalSumW);
-            double GiniY = (MaxValue[PixelIndex * 3 + 1] * TotalSumW - TotalSumX) / (MaxValue[PixelIndex * 3 + 1] * TotalSumW);
-            double GiniZ = (MaxValue[PixelIndex * 3 + 2] * TotalSumW - TotalSumX) / (MaxValue[PixelIndex * 3 + 2] * TotalSumW);
+            double GiniX = ((MaxValue[PixelIndex * 3] * TotalSumW) * 0.5 - TotalSumX) / ((MaxValue[PixelIndex * 3] * TotalSumW) * 0.5);
+            double GiniY = ((MaxValue[PixelIndex * 3 + 1] * TotalSumW) * 0.5 - TotalSumY) / ((MaxValue[PixelIndex * 3 + 1] * TotalSumW) * 0.5);
+            double GiniZ = ((MaxValue[PixelIndex * 3 + 2] * TotalSumW) * 0.5 - TotalSumZ) / ((MaxValue[PixelIndex * 3 + 2] * TotalSumW) * 0.5);
 
             bool bGini = false;
 
@@ -91,8 +91,8 @@ void FEstimator::SaveAsEXR(const std::string& Name)
             for (uint32_t i = 0; i < BucketsCount; ++i)
             {
                 ValuesX[i] = ImagesData[i][PixelIndex * 4] / ImagesData[i][PixelIndex * 4 + 3];
-                ValuesX[i] = ImagesData[i][PixelIndex * 4 + 1] / ImagesData[i][PixelIndex * 4 + 3];
-                ValuesX[i] = ImagesData[i][PixelIndex * 4 + 2] / ImagesData[i][PixelIndex * 4 + 3];
+                ValuesY[i] = ImagesData[i][PixelIndex * 4 + 1] / ImagesData[i][PixelIndex * 4 + 3];
+                ValuesZ[i] = ImagesData[i][PixelIndex * 4 + 2] / ImagesData[i][PixelIndex * 4 + 3];
             }
 
             if (bGini)
@@ -102,8 +102,8 @@ void FEstimator::SaveAsEXR(const std::string& Name)
                 std::sort(ValuesZ.begin(), ValuesZ.end());
 
                 ImageDataEstimated[PixelIndex * 3] = float(ValuesX[BucketsCount / 2]);
-                ImageDataEstimated[PixelIndex * 3 + 1] = float(ValuesX[BucketsCount / 2]);
-                ImageDataEstimated[PixelIndex * 3 + 2] = float(ValuesX[BucketsCount / 2]);
+                ImageDataEstimated[PixelIndex * 3 + 1] = float(ValuesY[BucketsCount / 2]);
+                ImageDataEstimated[PixelIndex * 3 + 2] = float(ValuesZ[BucketsCount / 2]);
             }
             else
             {

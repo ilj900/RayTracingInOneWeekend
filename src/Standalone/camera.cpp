@@ -130,14 +130,14 @@ void FCamera::Render(const FHittable &World, const FHittable& Lights)
                     {
                         auto Ray = GetRay(j, Line, si, sj);
                         FColor3 PixelColor = RayColor(Ray, MaxDepth, World, Lights);
-                        Estimator->Store(Line, j, PixelColor);
+                        Estimator->Store(j, Line, PixelColor);
                     }
                 }
             }
         }
     };
 
-    uint32_t ThreadsCount = std::thread::hardware_concurrency();
+    uint32_t ThreadsCount = 1;
 
     std::vector<std::vector<uint32_t>> LinesByThread(ThreadsCount);
 
