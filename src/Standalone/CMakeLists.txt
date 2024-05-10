@@ -4,6 +4,7 @@ set(INCLUDE
         camera.h
         common_defines.h
         constant_media.h
+        estimator.h
         hittable.h
         hittable_list.h
         interval.h
@@ -21,6 +22,7 @@ set(SOURCE
         bvh_node.cpp
         camera.cpp
         constant_media.cpp
+        estimator.cpp
         hittable.cpp
         hittable_list.cpp
         interval.cpp

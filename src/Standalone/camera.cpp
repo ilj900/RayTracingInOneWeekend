@@ -1,6 +1,3 @@
-#include "stb_image_write.h"
-#include "tinyexr.h"
-
 #include "common_defines.h"
 #include "camera.h"
 #include "material.h"
@@ -60,7 +57,8 @@ void FCamera::Initialize()
     ImageHeight = (ImageHeight < 1) ? 1 : ImageHeight;
     SqrtSPP = int(sqrt(SamplesPerPixel));
     RecipSqrtSPP = 1. / SqrtSPP;
-    ImageData = std::vector<double>(ImageWidth * ImageHeight * 4);
+
+    Estimator = std::make_shared<FEstimator>(ImageWidth, ImageHeight, 9, 0.25);
 
     CameraCenter = LookFrom;
 
@@ -132,7 +130,7 @@ void FCamera::Render(const FHittable &World, const FHittable& Lights)
                     {
                         auto Ray = GetRay(j, Line, si, sj);
                         FColor3 PixelColor = RayColor(Ray, MaxDepth, World, Lights);
-                        WriteColor(PixelColor, Line * ImageWidth + j);
+                        Estimator->Store(Line, j, PixelColor);
                     }
                 }
             }
@@ -167,53 +165,12 @@ void FCamera::Render(const FHittable &World, const FHittable& Lights)
     std::cout << "Rendering finished. Time: " <<  Elapsed.count() << std::endl;
 }
 
-void FCamera::WriteColor(const FColor3& PixelColor, uint32_t PixelIndex)
+void FCamera::SaveAsEXR(const std::string& Name)
 {
-    ImageData[PixelIndex * 4] += PixelColor.X;
-    ImageData[PixelIndex * 4 + 1] += PixelColor.Y;
-    ImageData[PixelIndex * 4 + 2] += PixelColor.Z;
-    ImageData[PixelIndex * 4 + 3] += 1;
+    Estimator->SaveAsEXR(Name);
 }
 
-double FCamera::LinearToGamma(double Value) const
+void FCamera::SaveAsBMP(const std::string& Name)
 {
-    if (Value > 0)
-    {
-        return sqrt(Value);
-    }
-
-    return 0;
-}
-
-void FCamera::SaveAsEXR(const std::string &Name)
-{
-    std::vector<float> ImageDataEstimated(ImageWidth * ImageHeight * 3);
-    static const FInterval Intensity(0, 0.999f);
-
-    for (uint32_t i = 0; i < ImageWidth * ImageHeight; ++i)
-    {
-        double InverseAccumulated = 1 / ImageData[i * 4 + 3];
-        ImageDataEstimated[i * 3] = Intensity.Clamp(LinearToGamma(ImageData[i * 4] * InverseAccumulated));
-        ImageDataEstimated[i * 3 + 1] = Intensity.Clamp(LinearToGamma(ImageData[i * 4 + 1] * InverseAccumulated));
-        ImageDataEstimated[i * 3 + 2] = Intensity.Clamp(LinearToGamma(ImageData[i * 4 + 2] * InverseAccumulated));
-    }
-
-    const char* Err = nullptr;
-    SaveEXR(ImageDataEstimated.data(), ImageWidth, ImageHeight, 3, false, Name.c_str(), &Err);
-}
-
-void FCamera::SaveAsBMP(const std::string &Name)
-{
-    std::vector<unsigned char> EstimatedUnsignedCharImageData(ImageWidth * ImageHeight * 3);
-    static const FInterval Intensity(0, 0.999f);
-
-    for (uint32_t i = 0; i < ImageWidth * ImageHeight; ++i)
-    {
-        double InverseAccumulated = 1 / ImageData[i * 4 + 3];
-        EstimatedUnsignedCharImageData[i * 3] = 256 * Intensity.Clamp(LinearToGamma(ImageData[i * 4] * InverseAccumulated));
-        EstimatedUnsignedCharImageData[i * 3 + 1] = 256 * Intensity.Clamp(LinearToGamma(ImageData[i * 4 + 1] * InverseAccumulated));
-        EstimatedUnsignedCharImageData[i * 3 + 2] = 256 * Intensity.Clamp(LinearToGamma(ImageData[i * 4 + 2] * InverseAccumulated));
-    }
-
-    stbi_write_bmp(Name.c_str(), ImageWidth, ImageHeight, 3, EstimatedUnsignedCharImageData.data());
+    Estimator->SaveAsBMP(Name);
 }

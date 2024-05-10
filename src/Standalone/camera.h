@@ -1,6 +1,7 @@
 #pragma once
 
 #include "color3.h"
+#include "estimator.h"
 #include "hittable.h"
 #include "rng.h"
 
@@ -29,8 +30,6 @@ private:
     void Initialize();
     FRay GetRay(uint32_t X, uint32_t Y, uint32_t SX, uint32_t SY);
     FColor3 RayColor(const FRay& Ray, uint32_t Depth, const FHittable& World, const FHittable& Lights);
-    void WriteColor(const FColor3& PixelColor, uint32_t PixelIndex);
-    double LinearToGamma(double Value) const;
 
     uint32_t ImageHeight;
     int SqrtSPP;
@@ -45,8 +44,8 @@ private:
     FVector3 DefocusDiscU;
     FVector3 DefocusDiscV;
 
-    std::vector<double> ImageData;
-
     RNG2D RNG2;
     RNG3D RNG3;
+
+    std::shared_ptr<FEstimator> Estimator;
 };
